@@ -1,25 +1,24 @@
 package crazysheep.io.materialmusic;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.fragment.PlaybackFragment;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Bind(R.id.toolbar) Toolbar mToolbar;
-    @Bind(R.id.fab) FloatingActionButton mFab;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
+    @Bind(R.id.nav_view) NavigationView mNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +26,10 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        initUI();
+    }
+
+    private void initUI() {
         setSupportActionBar(mToolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -34,8 +37,11 @@ public class MainActivity extends AppCompatActivity
         mDrawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavView.setNavigationItemSelectedListener(this);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.content_fl, new PlaybackFragment(), PlaybackFragment.TAG)
+                .commitAllowingStateLoss();
     }
 
     @Override

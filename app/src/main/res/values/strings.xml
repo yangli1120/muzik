@@ -5,4 +5,12 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="hint_account">Input account</string>
+    <string name="hint_password">Input password</string>
+
+    <string name="btn_login">Login</string>
+
+    <string name="msg_account_empty">Account is empty</string>
+    <string name="msg_password_empty">Password is empty</string>
 </resources>

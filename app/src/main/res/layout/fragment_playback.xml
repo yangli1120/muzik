@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/header_fl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="50%"
+        android:background="?attr/colorAccent">
+
+        <ImageView
+            android:id="@+id/song_cover_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="center"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+    <io.codetail.widget.RevealFrameLayout
+        android:id="@+id/content_rfl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="40%"
+        android:layout_below="@id/header_fl"
+        android:background="?attr/colorPrimaryDark">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/song_artist_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="33dp"
+                style="@style/MyTextTheme"
+                android:text="Lady Gaga"
+                android:textStyle="bold"
+                android:textSize="19sp"
+                android:textColor="@android:color/white"/>
+            <TextView
+                android:id="@+id/song_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:paddingLeft="33dp"
+                style="@style/MyTextTheme"
+                android:text="Just Dance"
+                android:textSize="17sp"
+                android:textColor="@android:color/darker_gray"/>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/song_control_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:background="@color/orange"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/song_previous_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:src="@drawable/ic_skip_previous"
+                    android:adjustViewBounds="true"/>
+                <ImageView
+                    android:id="@+id/song_play_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:src="@drawable/ic_pause"
+                    android:adjustViewBounds="true"/>
+                <ImageView
+                    android:id="@+id/song_next_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:src="@drawable/ic_skip_next"
+                    android:adjustViewBounds="true"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/song_volume_off_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:src="@drawable/ic_volume_down"
+                    android:adjustViewBounds="true"/>
+                <SeekBar
+                    android:id="@+id/song_volume_sb"
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.SeekBar"/>
+                <ImageView
+                    android:id="@+id/song_volume_on_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="30dp"
+                    android:src="@drawable/ic_volume_up"
+                    android:adjustViewBounds="true"/>
+            </LinearLayout>
+        </LinearLayout>
+    </io.codetail.widget.RevealFrameLayout>
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_heightPercent="20%"
+        android:layout_below="@id/content_rfl"
+        app:cardBackgroundColor="?attr/colorPrimary"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="4dp">
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/search_file_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/fab_margin"
+        app:layout_marginTopPercent="44%"
+        app:fabSize="normal"
+        android:src="@drawable/ic_play_arrow"
+        app:backgroundTint="@color/orange"/>
+
+</android.support.percent.PercentRelativeLayout>
