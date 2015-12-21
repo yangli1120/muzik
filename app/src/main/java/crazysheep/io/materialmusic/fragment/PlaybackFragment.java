@@ -2,9 +2,11 @@ package crazysheep.io.materialmusic.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,7 +14,10 @@ import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.animator.FabAlphaDirector;
+import crazysheep.io.materialmusic.animator.PlaybackDirector;
 import crazysheep.io.materialmusic.bean.PlaylistDto;
 import crazysheep.io.materialmusic.net.DoubanService;
 import crazysheep.io.materialmusic.utils.L;
@@ -31,6 +36,12 @@ public class PlaybackFragment extends BaseFragment {
     @Bind(R.id.song_artist_tv) TextView mArtistTv;
     @Bind(R.id.song_name_tv) TextView mSongNameTv;
     @Bind(R.id.song_cover_iv) ImageView mSongCoverIv;
+    @Bind(R.id.play_fab) FloatingActionButton mPlayFab;
+    @Bind(R.id.song_pause_iv) ImageView mSongPauseIv;
+    @Bind(R.id.song_control_ll) View mControlLl;
+
+    private PlaybackDirector.Builder mFabDirector;
+    private FabAlphaDirector.Builder mFabAlphaDirector;
 
     private Call<PlaylistDto> mPlaylistCall;
 
@@ -46,6 +57,19 @@ public class PlaybackFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_playback, container, false);
         ButterKnife.bind(this, contentView);
+
+        mControlLl.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mControlLl.getViewTreeObserver().removeOnPreDrawListener(this);
+                mControlLl.setVisibility(View.GONE);
+
+                return true;
+            }
+        });
+        mFabDirector = new PlaybackDirector.Builder(mPlayFab, mSongPauseIv, mControlLl);
+        mFabAlphaDirector = new FabAlphaDirector.Builder(mPlayFab, R.drawable.ic_play_arrow,
+                R.drawable.ic_pause);
 
         return contentView;
     }
@@ -78,4 +102,31 @@ public class PlaybackFragment extends BaseFragment {
             }
         });
     }
+
+    @OnClick(R.id.play_fab)
+    protected void fabOnClick() {
+        mFabAlphaDirector
+                .setListener(new FabAlphaDirector.SimpleAnimationListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        mFabAlphaDirector.setListener(null);
+                        mFabDirector.expand();
+                    }
+                })
+                .animate();
+    }
+
+    @OnClick(R.id.song_pause_iv)
+    protected void pauseOnClick() {
+        mFabDirector
+                .setListener(new PlaybackDirector.SimpleAnimationListener() {
+                    @Override
+                    public void onAnimationEnd() {
+                        mFabDirector.setListener(null);
+                        mFabAlphaDirector.reverse();
+                    }
+                })
+                .close();
+    }
+
 }

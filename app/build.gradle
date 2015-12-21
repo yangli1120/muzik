@@ -84,4 +84,5 @@ dependencies {
             transitive = true;
         }
     }
+    compile 'com.github.asyl.animation:arcanimator:1.0.0'
 }
