@@ -3,8 +3,12 @@ package crazysheep.io.materialmusic.animator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
+import android.view.animation.OvershootInterpolator;
 
 import com.nineoldandroids.animation.Animator;
 
@@ -65,8 +69,8 @@ public class PlaybackDirector {
                             - SystemUIHelper.getStatusBarSize(mFab.getContext()),
                     360,
                     Side.RIGHT);
-            arcAnimator.setDuration(100);
-            arcAnimator.setInterpolator(new LinearInterpolator());
+            arcAnimator.setDuration(150);
+            arcAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
             arcAnimator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {

@@ -11,14 +11,14 @@
         android:id="@+id/header_fl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_heightPercent="50%"
+        app:layout_heightPercent="65%"
         android:background="?attr/colorAccent">
 
         <ImageView
             android:id="@+id/song_cover_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scaleType="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:layout_gravity="center"/>
     </FrameLayout>
@@ -26,9 +26,9 @@
         android:id="@+id/content_rfl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_heightPercent="40%"
+        app:layout_heightPercent="25%"
         android:layout_below="@id/header_fl"
-        android:background="?attr/colorPrimaryDark">
+        android:background="@color/playback_bg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,7 +42,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="33dp"
                 style="@style/MyTextTheme"
-                android:text="Lady Gaga"
                 android:textStyle="bold"
                 android:textSize="19sp"
                 android:textColor="@android:color/white"/>
@@ -53,7 +52,6 @@
                 android:layout_marginTop="5dp"
                 android:paddingLeft="33dp"
                 style="@style/MyTextTheme"
-                android:text="Just Dance"
                 android:textSize="17sp"
                 android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
@@ -63,73 +61,127 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center_vertical"
-            android:background="@color/orange">
+            android:background="@color/playback_orange">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:gravity="center">
 
                 <ImageView
                     android:id="@+id/song_previous_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="30dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_skip_previous"
                     android:adjustViewBounds="true"/>
                 <ImageView
                     android:id="@+id/song_pause_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="30dp"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/ic_pause"
                     android:adjustViewBounds="true"/>
                 <ImageView
                     android:id="@+id/song_next_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="30dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="30dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_skip_next"
                     android:adjustViewBounds="true"/>
-            </LinearLayout>
-            <LinearLayout
+            </RelativeLayout>
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:gravity="center">
 
                 <ImageView
                     android:id="@+id/song_volume_off_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="30dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="36dp"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_volume_down"
                     android:adjustViewBounds="true"/>
                 <SeekBar
                     android:id="@+id/song_volume_sb"
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
                     style="@style/Widget.AppCompat.SeekBar"/>
                 <ImageView
                     android:id="@+id/song_volume_on_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="30dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="36dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
                     android:src="@drawable/ic_volume_up"
                     android:adjustViewBounds="true"/>
-            </LinearLayout>
+            </RelativeLayout>
         </LinearLayout>
     </io.codetail.widget.RevealFrameLayout>
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_heightPercent="20%"
+        app:layout_heightPercent="10%"
         android:layout_below="@id/content_rfl"
-        app:cardBackgroundColor="?attr/colorPrimary"
+        app:cardBackgroundColor="@color/playback_bottom_bg"
         app:cardCornerRadius="0dp"
         app:cardElevation="4dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="match_parent">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/album_cover_iv"
+                    android:layout_width="@dimen/avatar_medium"
+                    android:layout_height="@dimen/avatar_medium"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/album_artist_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    style="@style/MyTextTheme"
+                    android:textSize="@dimen/text_size_14"
+                    android:textColor="@android:color/white"/>
+                <TextView
+                    android:id="@+id/album_publish_date_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    style="@style/MyTextTheme"
+                    android:textSize="@dimen/text_size_10"
+                    android:textColor="@android:color/darker_gray"/>
+                <TextView
+                    android:id="@+id/album_name_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    style="@style/MyTextTheme"
+                    android:textSize="@dimen/text_size_11"
+                    android:textColor="@android:color/darker_gray"/>
+
+            </LinearLayout>
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
     <android.support.design.widget.FloatingActionButton
@@ -140,9 +192,9 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="@dimen/fab_margin"
-        app:layout_marginTopPercent="45%"
+        app:layout_marginTopPercent="60%"
         app:fabSize="normal"
         android:src="@drawable/ic_play_arrow"
-        app:backgroundTint="@color/orange"/>
+        app:backgroundTint="@color/playback_orange"/>
 
 </android.support.percent.PercentRelativeLayout>

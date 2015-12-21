@@ -13,4 +13,5 @@
 
     <string name="msg_account_empty">Account is empty</string>
     <string name="msg_password_empty">Password is empty</string>
+    <string name="tv_album">\"%s\"</string>
 </resources>

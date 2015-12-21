@@ -55,7 +55,7 @@ public class FabAlphaDirector {
 
         public void animate() {
             // alpha animator
-            alphaAnimator(0, 150, new SimpleAnimatorListener() {
+            alphaAnimator(0, 30, new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     if (mListener != null)
@@ -70,7 +70,7 @@ public class FabAlphaDirector {
         }
 
         public void reverse() {
-            alphaAnimator(0, 150, new SimpleAnimatorListener() {
+            alphaAnimator(0, 100, new SimpleAnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     if(mListener != null)

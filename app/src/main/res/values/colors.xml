@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#0093FF</color>
 
-    <color name="orange">#EB6334</color>
+    <color name="playback_bg">#27424B</color>
+    <color name="playback_orange">#EB6334</color>
+    <color name="playback_bottom_bg">#3A6474</color>
 </resources>
