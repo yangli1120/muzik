@@ -1,6 +1,12 @@
 package crazysheep.io.materialmusic.fragment;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
@@ -20,9 +26,11 @@ import crazysheep.io.materialmusic.animator.FabAlphaDirector;
 import crazysheep.io.materialmusic.animator.PlaybackDirector;
 import crazysheep.io.materialmusic.bean.AlbumDto;
 import crazysheep.io.materialmusic.bean.ArtistDto;
-import crazysheep.io.materialmusic.bean.PlaylistDto;
+import crazysheep.io.materialmusic.bean.SongDto;
 import crazysheep.io.materialmusic.net.DoubanService;
+import crazysheep.io.materialmusic.service.FMService;
 import crazysheep.io.materialmusic.utils.L;
+import de.greenrobot.event.EventBus;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -49,17 +57,27 @@ public class PlaybackFragment extends BaseFragment {
     private PlaybackDirector.Builder mFabDirector;
     private FabAlphaDirector.Builder mFabAlphaDirector;
 
-    private DoubanService mDoubanService;
-    private Call<PlaylistDto> mPlaylistCall;
-    private Call<AlbumDto> mAlbumCall;
+    private boolean bindService = false;
+    private FMService mFMService;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private SongDto mCurSong;
+    private SongDto mNextSong;
 
-        mDoubanService = mRetrofit.create(DoubanService.class);
-        mPlaylistCall = mDoubanService.fetchPlaylist(2);
-    }
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mFMService = ((FMService.FmBinder) service).getService();
+            if(mFMService.isStartup())
+                mFMService.fetchSong();
+
+            bindService = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            bindService = false;
+        }
+    };
 
     @Nullable
     @Override
@@ -85,39 +103,38 @@ public class PlaybackFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
 
-        mPlaylistCall.enqueue(new Callback<PlaylistDto>() {
-            @Override
-            public void onResponse(Response<PlaylistDto> response, Retrofit retrofit) {
-                L.d("request url: " + response.raw().request().urlString()
-                        + ", response: " + response.raw().toString());
+        EventBus.getDefault().register(this);
 
-                PlaylistDto result = response.body();
-                if(result != null && result.song != null && result.song.size() > 0) {
-                    Picasso.with(getActivity())
-                            .load(result.song.get(0).picture)
-                            .noPlaceholder()
-                            .into(mSongCoverIv);
+        getActivity().bindService(new Intent(getActivity(), FMService.class),
+                mConnection, Context.BIND_AUTO_CREATE);
+    }
 
-                    mArtistTv.setText(result.song.get(0).artist);
-                    mSongNameTv.setText(result.song.get(0).title);
+    @Override
+    public void onStop() {
+        super.onStop();
 
-                    // get album info
-                    getAlbumInfo(result.song.get(0).aid);
-                }
-            }
+        EventBus.getDefault().unregister(this);
 
-            @Override
-            public void onFailure(Throwable t) {
-                L.d("error: " + t.getMessage());
-            }
-        });
+        if(!mFMService.isPlaying()) {
+            mFMService.release();
+        } else {
+            mFMService.notifyPlaying();
+        }
+        if(bindService) {
+            getActivity().unbindService(mConnection);
+            bindService = false;
+        }
+    }
+
+    public void onEventMainThread(@NonNull FMService.EventCurrentSong event) {
+        updateCurrentSongUI(event.mSongDto);
     }
 
     private void getAlbumInfo(long albumId) {
-        mAlbumCall = mDoubanService.getAlbumInfo(albumId);
+        Call<AlbumDto> mAlbumCall = mRetrofit.create(DoubanService.class).getAlbumInfo(albumId);
         mAlbumCall.enqueue(new Callback<AlbumDto>() {
             @Override
             public void onResponse(Response<AlbumDto> response, Retrofit retrofit) {
@@ -148,14 +165,33 @@ public class PlaybackFragment extends BaseFragment {
         });
     }
 
+    private void updateCurrentSongUI(@NonNull SongDto songDto) {
+        Picasso.with(getActivity())
+                .load(songDto.picture)
+                .noPlaceholder()
+                .into(mSongCoverIv);
+
+        mArtistTv.setText(songDto.artist);
+        mSongNameTv.setText(songDto.title);
+
+        // get album info
+        getAlbumInfo(songDto.aid);
+
+        mCurSong = songDto;
+    }
+
     @OnClick(R.id.play_fab)
     protected void fabOnClick() {
+        mFMService.play(mCurSong);
+
         mFabAlphaDirector.animate();
         mFabDirector.expand();
     }
 
     @OnClick(R.id.song_pause_iv)
     protected void pauseOnClick() {
+        mFMService.pause();
+
         mFabDirector
                 .setListener(new PlaybackDirector.SimpleAnimationListener() {
                     @Override

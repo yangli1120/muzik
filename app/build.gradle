@@ -87,4 +87,6 @@ dependencies {
     compile 'com.github.asyl.animation:arcanimator:1.0.0'
     // circle image view
     compile 'de.hdodenhof:circleimageview:2.0.0'
+    // event bus
+    compile 'de.greenrobot:eventbus:2.4.0'
 }

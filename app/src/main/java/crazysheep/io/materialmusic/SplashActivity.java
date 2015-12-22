@@ -24,12 +24,11 @@ public class SplashActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
+
+        initUI();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
+    private void initUI() {
         mLogoTv.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {

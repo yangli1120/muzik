@@ -14,6 +14,8 @@ import retrofit.http.Query;
  */
 public interface DoubanService {
 
+    public static final long DEFAULT_CHANNEL_ID = 2;
+
     @GET("http://douban.fm/j/mine/playlist")
     Call<PlaylistDto> fetchPlaylist(@Query("channel") long channelId);
 

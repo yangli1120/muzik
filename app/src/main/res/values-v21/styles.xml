@@ -9,4 +9,9 @@
         <item name="android:windowTranslucentStatus">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
     </style>
+
+    <!-- my button style -->
+    <style name="MyButtonTheme" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/ripple</item>
+    </style>
 </resources>

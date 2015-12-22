@@ -18,6 +18,6 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         Logger.init(TAG)
-                .methodCount(30);
+                .methodCount(10);
     }
 }
