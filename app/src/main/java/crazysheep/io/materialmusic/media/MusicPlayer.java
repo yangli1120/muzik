@@ -48,7 +48,7 @@ public class MusicPlayer {
     }
 
     public void play(@NonNull String url) {
-        if(isPlaying() || isPause())
+        if(isPlaying() || isPause() || isPreparing())
             stop();
 
         mCurState = STATE_PREPARING;

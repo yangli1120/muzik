@@ -146,6 +146,7 @@
         app:cardElevation="4dp">
 
         <LinearLayout
+            android:id="@+id/next_song_info_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal">
@@ -166,7 +167,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    android:id="@+id/album_artist_tv"
+                    android:id="@+id/next_song_artist_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -174,23 +175,32 @@
                     android:textSize="@dimen/text_size_14"
                     android:textColor="@android:color/white"/>
                 <TextView
-                    android:id="@+id/album_publish_date_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    style="@style/MyTextTheme"
-                    android:textSize="@dimen/text_size_10"
-                    android:textColor="@android:color/darker_gray"/>
-                <TextView
-                    android:id="@+id/album_name_tv"
+                    android:id="@+id/next_song_name_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     style="@style/MyTextTheme"
                     android:textSize="@dimen/text_size_11"
                     android:textColor="@android:color/darker_gray"/>
-
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/current_song_info_ll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/current_song_info_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:layout_gravity="center_vertical"
+                style="@style/MyTextTheme"
+                android:textSize="@dimen/text_size_14"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

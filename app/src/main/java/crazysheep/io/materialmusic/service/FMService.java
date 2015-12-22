@@ -7,7 +7,10 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import crazysheep.io.materialmusic.bean.AlbumDto;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import crazysheep.io.materialmusic.bean.PlaylistDto;
 import crazysheep.io.materialmusic.bean.SongDto;
 import crazysheep.io.materialmusic.media.MusicPlayer;
@@ -31,10 +34,10 @@ public class FMService extends Service {
 
     public static class EventCurrentSong {
 
-        public SongDto mSongDto;
+        public List<SongDto> mSongs;
 
-        public EventCurrentSong(SongDto songDto) {
-            mSongDto = songDto;
+        public EventCurrentSong(@NonNull List<SongDto> songs) {
+            mSongs = songs;
         }
     }
 
@@ -45,7 +48,7 @@ public class FMService extends Service {
     private Retrofit mRetorfit;
     private DoubanService mDoubanService;
     private Call<PlaylistDto> mPlaylistCall;
-    private Call<AlbumDto> mAlbumCall;
+    private LinkedList<SongDto> mSongs = new LinkedList<>();
 
     private FmBinder mBinder = new FmBinder();
 
@@ -61,9 +64,11 @@ public class FMService extends Service {
 
         mRetorfit = NetClient.retrofit();
         mDoubanService = mRetorfit.create(DoubanService.class);
-        mPlaylistCall = mDoubanService.fetchPlaylist(DoubanService.DEFAULT_CHANNEL_ID);
 
         isInit = true;
+
+        // fetch songs
+        checkIfNeedFetchSong();
     }
 
     @Override
@@ -88,15 +93,19 @@ public class FMService extends Service {
         return isInit;
     }
 
-    //////////////// net action //////////////////////////////
-
-    public void fetchSong() {
+    private void fetchSong() {
+        mPlaylistCall = mDoubanService.fetchPlaylist(DoubanService.DEFAULT_CHANNEL_ID);
         mPlaylistCall.enqueue(new Callback<PlaylistDto>() {
             @Override
             public void onResponse(Response<PlaylistDto> response, Retrofit retrofit) {
                 if(!Utils.checkNull(response.body())
-                        && !Utils.checkNull(response.body().song))
-                    EventBus.getDefault().post(new EventCurrentSong(response.body().song.get(0)));
+                        && !Utils.checkNull(response.body().song)
+                        && !Utils.checkNull(response.body().song.get(0)))
+                    mSongs.add(response.body().song.get(0));
+
+                if(mSongs.size() >= 2)
+                    broadcastSongs();
+                checkIfNeedFetchSong();
             }
 
             @Override
@@ -105,6 +114,30 @@ public class FMService extends Service {
         });
     }
 
+    private void checkIfNeedFetchSong() {
+        if(mSongs.size() < 2)
+            fetchSong();
+    }
+
+    private void broadcastSongs() {
+        EventBus.getDefault().post(new EventCurrentSong(mSongs));
+    }
+
+    //////////////// event action //////////////////////////////
+
+    public void requestSongs() {
+        if(!Utils.checkNull(mSongs) && mSongs.size() >= 2)
+            broadcastSongs();
+        else
+            fetchSong();
+    }
+
+    public void next() {
+        mSongs.removeFirst();
+        play(mSongs.get(0), true);
+
+        checkIfNeedFetchSong();
+    }
 
     //////////////// music action ////////////////////////////
 
