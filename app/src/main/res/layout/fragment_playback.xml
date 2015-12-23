@@ -74,11 +74,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_skip_previous"
                     android:adjustViewBounds="true"
-                    style="@style/MyButtonTheme"/>
+                    style="@style/MyButtonTheme" />
                 <ImageView
                     android:id="@+id/song_pause_iv"
                     android:layout_width="wrap_content"
@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="30dp"
+                    android:layout_marginRight="20dp"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_skip_next"
                     android:adjustViewBounds="true"
@@ -106,27 +106,24 @@
                 android:layout_weight="1"
                 android:gravity="center">
 
-                <ImageView
-                    android:id="@+id/song_volume_off_iv"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_marginLeft="36dp"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/ic_volume_down"
-                    android:scaleType="center"
-                    android:adjustViewBounds="true"
-                    style="@style/MyButtonTheme"/>
-                <SeekBar
-                    android:id="@+id/song_volume_sb"
-                    android:layout_width="180dp"
+                <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
+                    android:id="@+id/music_sb"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="26dp"
                     android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/song_volume_on_iv"
                     android:layout_centerInParent="true"
-                    style="@style/Widget.AppCompat.SeekBar" />
+                    app:dsb_min="0"
+                    app:dsb_progressColor="@android:color/white"
+                    app:dsb_trackColor="@android:color/white"
+                    app:dsb_indicatorColor="@android:color/white"
+                    app:dsb_rippleColor="@color/seek_ripple_bg"
+                    app:dsb_indicatorTextAppearance="@style/MyTextTheme"/>
                 <ImageView
                     android:id="@+id/song_volume_on_iv"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
-                    android:layout_marginRight="36dp"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="20dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_volume_up"

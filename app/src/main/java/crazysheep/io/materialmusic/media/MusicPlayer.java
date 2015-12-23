@@ -38,6 +38,7 @@ public class MusicPlayer {
     private String mUrl;
 
     private MediaPlayer mPlayer;
+    private boolean isVolumeOn = true;
 
     private MediaPlayer getPlayer() {
         // init player
@@ -92,6 +93,7 @@ public class MusicPlayer {
         mCurState = STATE_STOP;
 
         getPlayer().stop();
+        getPlayer().reset();
     }
 
     private void start() {
@@ -113,6 +115,21 @@ public class MusicPlayer {
         mContext = null;
     }
 
+    public void toggleVolume(boolean on) {
+        isVolumeOn = on;
+        int volume = on ? 1 : 0;
+        getPlayer().setVolume(volume, volume);
+    }
+
+    public boolean isVolumeOn() {
+        return isVolumeOn;
+    }
+
+    public void seekTo(int position) {
+        if(isPlaying() || isPause())
+            getPlayer().seekTo(position * 1000);
+    }
+
     public boolean isPreparing() {
         return mCurState == STATE_PREPARING;
     }
@@ -131,6 +148,13 @@ public class MusicPlayer {
 
     public boolean isCurrentUrl(@NonNull String url) {
         return mUrl.equalsIgnoreCase(url);
+    }
+
+    public int getProgress() {
+        if(isPause() || isPlaying())
+            return getPlayer().getCurrentPosition();
+
+        return 0;
     }
 
 }

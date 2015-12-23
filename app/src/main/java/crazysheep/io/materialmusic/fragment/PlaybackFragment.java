@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -31,6 +33,7 @@ import crazysheep.io.materialmusic.animator.FabAlphaDirector;
 import crazysheep.io.materialmusic.animator.PlaybackDirector;
 import crazysheep.io.materialmusic.bean.SongDto;
 import crazysheep.io.materialmusic.service.FMService;
+import crazysheep.io.materialmusic.utils.StringUtils;
 import crazysheep.io.materialmusic.widget.SimpleAnimatorListener;
 import de.greenrobot.event.EventBus;
 
@@ -54,6 +57,8 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
     @Bind(R.id.next_song_artist_tv) TextView mNextSongArtistTv;
     @Bind(R.id.next_song_name_tv) TextView mNextSongNameTv;
     @Bind(R.id.next_song_info_ll) View mNextSongInfoLl;
+    @Bind(R.id.music_sb) DiscreteSeekBar mMusicSb;
+    @Bind(R.id.song_volume_on_iv) ImageView mVolumeOnIv;
 
     private int mInfoLayoutTranslateDis = 0;
 
@@ -88,6 +93,12 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
         View contentView = inflater.inflate(R.layout.fragment_playback, container, false);
         ButterKnife.bind(this, contentView);
 
+        initUI();
+
+        return contentView;
+    }
+
+    private void initUI() {
         mNextSongInfoLl.setOnClickListener(this);
         mSongNextIv.setOnClickListener(this);
         mNextSongInfoLl.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -112,7 +123,38 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
         mFabAlphaDirector = new FabAlphaDirector.Builder(mPlayFab, R.drawable.ic_play_arrow,
                 R.drawable.ic_pause);
 
-        return contentView;
+        // pretty seek bar
+        mMusicSb.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+            @Override
+            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
+                if (mFMService.isStartup())
+                    mFMService.seekTo(seekBar.getProgress());
+            }
+        });
+        mMusicSb.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
+            @Override
+            public int transform(int value) {
+                return value;
+            }
+
+            @Override
+            public String transformToString(int value) {
+                return StringUtils.formatDuration(value);
+            }
+
+            @Override
+            public boolean useStringTransform() {
+                return true;
+            }
+        });
     }
 
     @Override
@@ -132,7 +174,7 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
         EventBus.getDefault().unregister(this);
 
         if(!mFMService.isPlaying()) {
-            mFMService.release();
+            mFMService.stop();
         } else {
             mFMService.notifyPlaying();
         }
@@ -143,7 +185,17 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
     }
 
     public void onEventMainThread(@NonNull FMService.EventCurrentSong event) {
+        // set max value for seekbar
+        SongDto currentSong = event.mSongs.get(0);
+        if(currentSong.length > 0)
+            mMusicSb.setMax(currentSong.length);
+
         updateSongUI(event.mSongs);
+    }
+
+    public void onEventMainThread(@NonNull FMService.EventCurrentProgress event) {
+        if(event.mCurrentSong.sid == mSongList.get(0).sid)
+            mMusicSb.setProgress(event.mProgress);
     }
 
     private void updateSongUI(@NonNull List<SongDto> songs) {
@@ -197,6 +249,13 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
                     }
                 })
                 .close();
+    }
+
+    @OnClick(R.id.song_volume_on_iv)
+    protected void toggleVolume() {
+        boolean volumeOn = !mFMService.isVolumeOn();
+        mVolumeOnIv.setImageResource(volumeOn ? R.drawable.ic_volume_up : R.drawable.ic_volume_off);
+        mFMService.toggleVolume(volumeOn);
     }
 
     @Override

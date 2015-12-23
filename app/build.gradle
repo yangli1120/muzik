@@ -89,4 +89,6 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     // event bus
     compile 'de.greenrobot:eventbus:2.4.0'
+    // seek bar
+    compile 'org.adw.library:discrete-seekbar:1.0.0'
 }

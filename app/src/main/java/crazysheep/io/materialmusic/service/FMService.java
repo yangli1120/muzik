@@ -3,11 +3,13 @@ package crazysheep.io.materialmusic.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,7 +43,23 @@ public class FMService extends Service {
         }
     }
 
+    public static class EventCurrentProgress {
+        public SongDto mCurrentSong;
+        /**
+         * seconds
+         * */
+        public int mProgress;
+
+        public EventCurrentProgress(@NonNull SongDto songDto, int progress) {
+            mCurrentSong = songDto;
+            mProgress = progress;
+        }
+    }
+
     ///////////////////////////////////////////////////////
+
+    private static final int MSG_TIK_TOK = 111;
+    private static final int DURATION_TIK_TOK = 1000; // 1s
 
     private boolean isInit = false;
 
@@ -49,6 +67,33 @@ public class FMService extends Service {
     private DoubanService mDoubanService;
     private Call<PlaylistDto> mPlaylistCall;
     private LinkedList<SongDto> mSongs = new LinkedList<>();
+
+    private static class MyHandler extends Handler {
+
+        private WeakReference<FMService> mReference;
+
+        public MyHandler(FMService service) {
+            mReference = new WeakReference<>(service);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_TIK_TOK: {
+                    if(!Utils.checkNull(mReference.get())) {
+                        FMService service = mReference.get();
+                        EventBus.getDefault().post(new EventCurrentProgress(service.mSongs.get(0),
+                                service.getProgress() / 1000));
+                    }
+
+                    removeMessages(MSG_TIK_TOK);
+                    sendEmptyMessageDelayed(MSG_TIK_TOK, DURATION_TIK_TOK);
+                }break;
+            }
+        }
+    }
+
+    private MyHandler mHandler = new MyHandler(this);
 
     private FmBinder mBinder = new FmBinder();
 
@@ -76,6 +121,7 @@ public class FMService extends Service {
         super.onDestroy();
 
         isInit = false;
+        MusicPlayer.getInstance(this).release();
     }
 
     @Nullable
@@ -98,12 +144,12 @@ public class FMService extends Service {
         mPlaylistCall.enqueue(new Callback<PlaylistDto>() {
             @Override
             public void onResponse(Response<PlaylistDto> response, Retrofit retrofit) {
-                if(!Utils.checkNull(response.body())
+                if (!Utils.checkNull(response.body())
                         && !Utils.checkNull(response.body().song)
                         && !Utils.checkNull(response.body().song.get(0)))
                     mSongs.add(response.body().song.get(0));
 
-                if(mSongs.size() >= 2)
+                if (mSongs.size() >= 2)
                     broadcastSongs();
                 checkIfNeedFetchSong();
             }
@@ -139,7 +185,18 @@ public class FMService extends Service {
         checkIfNeedFetchSong();
     }
 
+    private void toggleTikTokEvent(boolean play) {
+        mHandler.removeMessages(MSG_TIK_TOK);
+        // toggle tik tok event
+        if(play)
+            mHandler.sendEmptyMessage(MSG_TIK_TOK);
+    }
+
     //////////////// music action ////////////////////////////
+
+    public int getProgress() {
+        return MusicPlayer.getInstance(this).getProgress();
+    }
 
     public void play(@NonNull SongDto song) {
         play(song, false);
@@ -154,18 +211,20 @@ public class FMService extends Service {
             MusicPlayer.getInstance(this).resume();
         else
             MusicPlayer.getInstance(this).play(song.url);
+
+        toggleTikTokEvent(true);
     }
 
     public void pause() {
         MusicPlayer.getInstance(this).pause();
+
+        toggleTikTokEvent(false);
     }
 
     public void stop() {
         MusicPlayer.getInstance(this).stop();
-    }
 
-    public void release() {
-        MusicPlayer.getInstance(this).release();
+        toggleTikTokEvent(false);
     }
 
     public boolean isPlaying() {
@@ -174,6 +233,18 @@ public class FMService extends Service {
 
     public void notifyPlaying() {
         // TODO show ongoing notification to avoid service be killed
+    }
+
+    public boolean isVolumeOn() {
+        return MusicPlayer.getInstance(this).isVolumeOn();
+    }
+
+    public void toggleVolume(boolean on) {
+        MusicPlayer.getInstance(this).toggleVolume(on);
+    }
+
+    public void seekTo(int position) {
+        MusicPlayer.getInstance(this).seekTo(position);
     }
 
 }
