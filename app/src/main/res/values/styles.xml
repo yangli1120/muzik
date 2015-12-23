@@ -25,5 +25,7 @@
     <!-- my button theme -->
     <style name="MyButtonTheme">
     </style>
+    <style name="MyRectButtonTheme">
+    </style>
 
 </resources>

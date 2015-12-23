@@ -149,7 +149,8 @@
             android:id="@+id/next_song_info_ll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            style="@style/MyRectButtonTheme">
 
             <FrameLayout
                 android:layout_width="80dp"

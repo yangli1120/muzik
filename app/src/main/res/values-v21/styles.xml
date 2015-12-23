@@ -12,6 +12,9 @@
 
     <!-- my button style -->
     <style name="MyButtonTheme" parent="Widget.AppCompat.Button">
-        <item name="android:background">@drawable/ripple</item>
+        <item name="android:background">@drawable/oval_ripple</item>
+    </style>
+    <style name="MyRectButtonTheme" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/rect_ripple</item>
     </style>
 </resources>

@@ -152,10 +152,12 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
         Picasso.with(getActivity())
                 .load(currentSong.picture)
                 .noPlaceholder()
+                .noFade()
                 .into(mSongCoverIv);
         mArtistTv.setText(currentSong.artist);
         mSongNameTv.setText(currentSong.title);
-        mCurrentSongInfoTv.setText(currentSong.artist + " - " + currentSong.title);
+        mCurrentSongInfoTv.setText(getString(R.string.tv_next_song_info, currentSong.artist,
+                currentSong.title));
 
         // update next song ui
         SongDto nextSong = songs.get(1);
