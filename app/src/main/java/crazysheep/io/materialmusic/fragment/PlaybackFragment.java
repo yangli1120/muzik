@@ -23,8 +23,6 @@ import com.squareup.picasso.Picasso;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,6 +30,7 @@ import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.animator.FabAlphaDirector;
 import crazysheep.io.materialmusic.animator.PlaybackDirector;
 import crazysheep.io.materialmusic.bean.SongDto;
+import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.FMService;
 import crazysheep.io.materialmusic.utils.StringUtils;
 import crazysheep.io.materialmusic.widget.SimpleAnimatorListener;
@@ -65,10 +64,11 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
     private PlaybackDirector.Builder mFabDirector;
     private FabAlphaDirector.Builder mFabAlphaDirector;
 
+    private SongDto mCurSong;
+    private SongDto mNextSong;
+
     private boolean bindService = false;
     private FMService mFMService;
-
-    private List<SongDto> mSongList;
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -184,56 +184,61 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-    public void onEventMainThread(@NonNull FMService.EventCurrentSong event) {
-        // set max value for seekbar
-        SongDto currentSong = event.mSongs.get(0);
-        if(currentSong.length > 0)
-            mMusicSb.setMax(currentSong.length);
+    // event bus message receiver
+    @SuppressWarnings("unused")
+    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
+        if(mCurSong.sid != event.currentSong.sid) {
+            mCurSong = event.currentSong;
+            updateCurrentSongUI();
+            mMusicSb.setMax(event.currentSong.length);
+        }
 
-        updateSongUI(event.mSongs);
+        // same song, just update progress
+        mMusicSb.setProgress(event.progress);
     }
 
-    public void onEventMainThread(@NonNull FMService.EventCurrentProgress event) {
-        if(event.mCurrentSong.sid == mSongList.get(0).sid)
-            mMusicSb.setProgress(event.mProgress);
+    @SuppressWarnings("unused")
+    public void onEventMainThread(@NonNull FMService.EventCurrentAndNextSong event) {
+        mCurSong = event.currentSong;
+        mNextSong = event.nextSong;
+
+        updateCurrentSongUI();
+        updateNextSongUI();
     }
 
-    private void updateSongUI(@NonNull List<SongDto> songs) {
-        // update current song ui
-        SongDto currentSong = songs.get(0);
+    private void updateCurrentSongUI() {
         Picasso.with(getActivity())
-                .load(currentSong.picture)
+                .load(mCurSong.picture)
                 .noPlaceholder()
                 .noFade()
                 .into(mSongCoverIv);
-        mArtistTv.setText(currentSong.artist);
-        mSongNameTv.setText(currentSong.title);
-        mCurrentSongInfoTv.setText(getString(R.string.tv_next_song_info, currentSong.artist,
-                currentSong.title));
-
-        // update next song ui
-        SongDto nextSong = songs.get(1);
-        Picasso.with(getActivity())
-                .load(nextSong.picture)
-                .noPlaceholder()
-                .into(mNextSongCoverIv);
-        mNextSongArtistTv.setText(nextSong.artist);
-        mNextSongNameTv.setText(nextSong.title);
-
-        // save songs
-        mSongList = songs;
+        mArtistTv.setText(mCurSong.artist);
+        mSongNameTv.setText(mCurSong.title);
+        mCurrentSongInfoTv.setText(getString(R.string.tv_next_song_info, mCurSong.artist,
+                mCurSong.title));
     }
 
+    private void updateNextSongUI() {
+        Picasso.with(getActivity())
+                .load(mNextSong.picture)
+                .noPlaceholder()
+                .into(mNextSongCoverIv);
+        mNextSongArtistTv.setText(mNextSong.artist);
+        mNextSongNameTv.setText(mNextSong.title);
+    }
+
+    @SuppressWarnings("unused")
     @OnClick(R.id.play_fab)
     protected void fabOnClick() {
         showCurrentSongInfoLayout(true);
 
-        mFMService.play(mSongList.get(0));
+        mFMService.play(mCurSong);
 
         mFabAlphaDirector.animate();
         mFabDirector.expand();
     }
 
+    @SuppressWarnings("unused")
     @OnClick(R.id.song_pause_iv)
     protected void pauseOnClick() {
         showCurrentSongInfoLayout(false);
@@ -251,6 +256,7 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
                 .close();
     }
 
+    @SuppressWarnings("unused")
     @OnClick(R.id.song_volume_on_iv)
     protected void toggleVolume() {
         boolean volumeOn = !mFMService.isVolumeOn();
