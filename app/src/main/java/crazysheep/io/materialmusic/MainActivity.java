@@ -9,9 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.fragment.PlaybackFragment;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -21,8 +26,14 @@ public class MainActivity extends BaseActivity
     @Bind(R.id.nav_view) NavigationView mNavView;
 
     @Override
+    protected int getCurrentTheme() {
+        return R.style.AppTheme_Night;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -42,6 +53,7 @@ public class MainActivity extends BaseActivity
         getFragmentManager().beginTransaction()
                 .replace(R.id.content_fl, new PlaybackFragment(), PlaybackFragment.TAG)
                 .commitAllowingStateLoss();
+        mNavView.getMenu().findItem(R.id.nav_douban_fm).setChecked(true);
     }
 
     @Override
@@ -78,9 +90,31 @@ public class MainActivity extends BaseActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        item.setChecked(true);
+        switch (item.getItemId()) {
+            case R.id.nav_search: {
+                // TODO show search fragment
+            }break;
+
+            case R.id.nav_douban_fm: {
+                // TODO show douban fm fragment
+            }break;
+
+            case R.id.nav_local: {
+                // TODO show local music fragment
+            }break;
+        }
+
+        Observable.just(true)
+                .delay(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        mDrawer.closeDrawer(GravityCompat.START);
+                    }
+                });
+
         return true;
     }
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorNavigationItemHighlight" format="color|reference" />
+    <attr name="colorNavigationItemTextColor" format="color|reference" />
+    <attr name="colorNavigationBackground" format="color|reference" />
+    <attr name="colorNavigationIconTint" format="color|reference" />
+</resources>

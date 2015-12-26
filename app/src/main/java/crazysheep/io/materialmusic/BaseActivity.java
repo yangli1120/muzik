@@ -2,6 +2,7 @@ package crazysheep.io.materialmusic;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 
 import crazysheep.io.materialmusic.net.NetClient;
@@ -21,6 +22,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme(getCurrentTheme());
 
         TAG = this.getClass().getSimpleName();
 
@@ -29,6 +31,15 @@ public class BaseActivity extends AppCompatActivity {
 
     protected final Activity getActivity() {
         return this;
+    }
+
+    /**
+     * return theme for current activity
+     * */
+    @StyleRes
+    protected int getCurrentTheme() {
+        // day theme by default
+        return R.style.AppTheme_Day;
     }
 
 }

@@ -28,4 +28,16 @@
     <style name="MyRectButtonTheme">
     </style>
 
+    <!-- navigation style -->
+    <style name="MyTextTheme.Navigation" parent="MyTextTheme">
+        <item name="android:textSize">19sp</item>
+    </style>
+    <style name="MyNavViewStyle">
+        <item name="itemTextColor">?colorNavigationItemTextColor</item>
+        <item name="itemTextAppearance">@style/MyTextTheme.Navigation</item>
+        <item name="android:background">?colorNavigationBackground</item>
+        <item name="itemIconTint">?colorNavigationIconTint</item>
+        <item name="itemBackground">@drawable/nav_item_bg</item>
+    </style>
+
 </resources>

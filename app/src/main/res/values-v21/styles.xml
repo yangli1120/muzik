@@ -17,4 +17,5 @@
     <style name="MyRectButtonTheme" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/rect_ripple</item>
     </style>
+
 </resources>
