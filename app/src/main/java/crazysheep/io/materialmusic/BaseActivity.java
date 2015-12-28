@@ -6,6 +6,7 @@ import android.support.annotation.StyleRes;
 import android.support.v7.app.AppCompatActivity;
 
 import crazysheep.io.materialmusic.net.NetClient;
+import crazysheep.io.materialmusic.utils.Utils;
 import retrofit.Retrofit;
 
 /**
@@ -40,6 +41,16 @@ public class BaseActivity extends AppCompatActivity {
     protected int getCurrentTheme() {
         // day theme by default
         return R.style.AppTheme_Day;
+    }
+
+    public void hideSupportActionBar() {
+        if(!Utils.checkNull(getSupportActionBar()))
+            getSupportActionBar().hide();
+    }
+
+    public void showSupportActionbar() {
+        if(!Utils.checkNull(getSupportActionBar()))
+            getSupportActionBar().show();
     }
 
 }

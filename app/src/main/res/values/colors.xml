@@ -11,13 +11,13 @@
     <color name="seek_ripple_bg">#330093FF</color>
 
     <!-- day theme -->
-    <color name="d_nav_itemTextColor">#878787</color>
+    <color name="d_itemTextColor">#878787</color>
     <color name="d_nav_item_hl_bg">#e0e0e0</color>
-    <color name="d_nav_root_bg">@android:color/white</color>
+    <color name="d_root_bg">@android:color/white</color>
 
     <!-- night theme -->
-    <color name="n_nav_itemTextColor">#ffffff</color>
+    <color name="n_itemTextColor">#ffffff</color>
     <color name="n_nav_item_hl_bg">#646b6f</color>
-    <color name="n_nav_root_bg">#212b30</color>
+    <color name="n_root_bg">#212b30</color>
 
 </resources>

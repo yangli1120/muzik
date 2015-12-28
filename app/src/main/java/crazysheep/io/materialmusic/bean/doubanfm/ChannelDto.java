@@ -1,4 +1,4 @@
-package crazysheep.io.materialmusic.bean;
+package crazysheep.io.materialmusic.bean.doubanfm;
 
 /**
  * channel dto

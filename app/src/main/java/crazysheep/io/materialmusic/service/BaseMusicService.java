@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
-import crazysheep.io.materialmusic.bean.SongDto;
+import crazysheep.io.materialmusic.bean.doubanfm.SongDto;
 import crazysheep.io.materialmusic.media.MusicPlayer;
 import crazysheep.io.materialmusic.utils.Utils;
 import de.greenrobot.event.EventBus;

@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 
 import java.util.LinkedList;
 
-import crazysheep.io.materialmusic.bean.PlaylistDto;
-import crazysheep.io.materialmusic.bean.SongDto;
+import crazysheep.io.materialmusic.bean.doubanfm.PlaylistDto;
+import crazysheep.io.materialmusic.bean.doubanfm.SongDto;
 import crazysheep.io.materialmusic.net.DoubanService;
 import crazysheep.io.materialmusic.net.NetClient;
 import crazysheep.io.materialmusic.utils.Utils;

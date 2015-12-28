@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import crazysheep.io.materialmusic.bean.LoginDto;
+import crazysheep.io.materialmusic.bean.doubanfm.LoginDto;
 
 /**
  * prefs for user

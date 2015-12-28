@@ -15,4 +15,8 @@
     <string name="msg_password_empty">Password is empty</string>
     <string name="tv_album">\"%s\"</string>
     <string name="tv_next_song_info">%1$s - %2$s</string>
+
+    <string name="tv_local_music_title">Local Music</string>
+    <string name="tv_default_playlist_name">all songs</string>
+    <string name="tv_genres">genres</string>
 </resources>

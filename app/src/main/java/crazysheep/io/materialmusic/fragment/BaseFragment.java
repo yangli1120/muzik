@@ -1,7 +1,9 @@
 package crazysheep.io.materialmusic.fragment;
 
-import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 
 import crazysheep.io.materialmusic.net.NetClient;
 import retrofit.Retrofit;
@@ -28,6 +30,13 @@ public class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mRetrofit = NetClient.retrofit();
+    }
+
+    protected ActionBar getSupportActionBar() {
+        if(getActivity() instanceof AppCompatActivity)
+            return ((AppCompatActivity) getActivity()).getSupportActionBar();
+
+        return null;
     }
 
 }

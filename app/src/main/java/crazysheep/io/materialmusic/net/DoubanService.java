@@ -1,7 +1,7 @@
 package crazysheep.io.materialmusic.net;
 
-import crazysheep.io.materialmusic.bean.AlbumDto;
-import crazysheep.io.materialmusic.bean.PlaylistDto;
+import crazysheep.io.materialmusic.bean.doubanfm.AlbumDto;
+import crazysheep.io.materialmusic.bean.doubanfm.PlaylistDto;
 import retrofit.Call;
 import retrofit.http.GET;
 import retrofit.http.Path;

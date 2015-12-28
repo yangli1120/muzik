@@ -3,15 +3,15 @@
     <!-- themes -->
     <style name="AppTheme.Day" parent="AppTheme.NoActionBar" >
         <item name="colorNavigationItemHighlight">@color/d_nav_item_hl_bg</item>
-        <item name="colorNavigationItemTextColor">@color/d_nav_itemTextColor</item>
-        <item name="colorNavigationBackground">@color/d_nav_root_bg</item>
+        <item name="colorNavigationItemTextColor">@color/d_itemTextColor</item>
+        <item name="colorNavigationBackground">@color/d_root_bg</item>
         <item name="colorNavigationIconTint">@android:color/black</item>
     </style>
 
     <style name="AppTheme.Night" parent="AppTheme.Day">
         <item name="colorNavigationItemHighlight">@color/n_nav_item_hl_bg</item>
-        <item name="colorNavigationItemTextColor">@color/n_nav_itemTextColor</item>
-        <item name="colorNavigationBackground">@color/n_nav_root_bg</item>
+        <item name="colorNavigationItemTextColor">@color/n_itemTextColor</item>
+        <item name="colorNavigationBackground">@color/n_root_bg</item>
         <item name="colorNavigationIconTint">@android:color/white</item>
     </style>
 </resources>

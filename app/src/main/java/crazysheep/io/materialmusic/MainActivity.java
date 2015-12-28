@@ -1,6 +1,7 @@
 package crazysheep.io.materialmusic;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.fragment.LocalMusicFragment;
 import crazysheep.io.materialmusic.fragment.PlaybackFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -21,7 +23,6 @@ import rx.functions.Action1;
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
     @Bind(R.id.nav_view) NavigationView mNavView;
 
@@ -40,20 +41,22 @@ public class MainActivity extends BaseActivity
         initUI();
     }
 
-    private void initUI() {
-        setSupportActionBar(mToolbar);
+    public void setToolbar(@NonNull Toolbar toolbar) {
+        setSupportActionBar(toolbar);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.setDrawerListener(toggle);
         toggle.syncState();
+    }
 
+    private void initUI() {
         mNavView.setNavigationItemSelectedListener(this);
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.content_fl, new PlaybackFragment(), PlaybackFragment.TAG)
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.content_fl, new LocalMusicFragment(), PlaybackFragment.TAG)
                 .commitAllowingStateLoss();
-        mNavView.getMenu().findItem(R.id.nav_douban_fm).setChecked(true);
+        mNavView.getMenu().findItem(R.id.nav_local).setChecked(true);
     }
 
     @Override
@@ -102,6 +105,9 @@ public class MainActivity extends BaseActivity
 
             case R.id.nav_local: {
                 // TODO show local music fragment
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.content_fl, new LocalMusicFragment(), LocalMusicFragment.TAG)
+                        .commitAllowingStateLoss();
             }break;
         }
 

@@ -1,34 +1,16 @@
-package crazysheep.io.materialmusic.bean;
+package crazysheep.io.materialmusic.bean.doubanfm;
 
 import java.util.List;
 
 /**
- * album dto
+ * album attrs dto
  *
  * Created by crazysheep on 15/12/21.
  */
-public class AlbumDto extends BaseDto {
+public class AlbumAttrsDto extends BaseDto {
 
     /*
-     *
-        {
-          "rating": {
-            "max": 10,
-            "average": "9.0",
-            "numRaters": 322,
-            "min": 0
-          },
-          "author": [
-            {
-              "name": "Ataraxia"
-            }
-          ],
-          "alt_title": "",
-          "image": "https://img1.doubanio.com/spic/s1506689.jpg",
-          "title": "A Calliope... Collection",
-          "mobile_link": "http://m.douban.com/music/subject/1499824/",
-          "summary": "Ataraxia / 专辑 / 2001-12 / Future Insights / CD",
-          "attrs": {
+    * {
             "publisher": [
               "Future Insights"
             ],
@@ -136,55 +118,17 @@ public class AlbumDto extends BaseDto {
                 "title": "A Calliope"
               }
             ]
-          },
-          "alt": "http://music.douban.com/subject/1499824/",
-          "id": "1499824",
-          "tags": [
-            {
-              "count": 93,
-              "name": "darkwave"
-            },
-            {
-              "count": 68,
-              "name": "Neo-Classical"
-            },
-            {
-              "count": 63,
-              "name": "ATARAXIA"
-            },
-            {
-              "count": 42,
-              "name": "意大利"
-            },
-            {
-              "count": 23,
-              "name": "Neo-Folk"
-            },
-            {
-              "count": 19,
-              "name": "中世纪民谣"
-            },
-            {
-              "count": 17,
-              "name": "Medieval"
-            },
-            {
-              "count": 13,
-              "name": "Ataraxia"
-            }
-          ]
-        }
+          }
     * */
+    public List<String> publisher;
+    public List<String> singer;
+    public List<String> discs;
+    public String radio_url;
+    public List<String> pubdate;
+    public List<String> title;
+    public List<String> media;
+    public List<String> tracks;
+    public List<String> version;
 
-    public RatingDto rating;
-    public List<ArtistDto> author;
-    public String image;
-    public String title;
-    public String mobile_link;
-    public String summary;
-    public AlbumAttrsDto attrs;
-    public String alt;
-    public long id;
-    public List<TagDto> tags;
 
 }

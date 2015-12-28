@@ -29,7 +29,7 @@ import butterknife.OnClick;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.animator.FabAlphaDirector;
 import crazysheep.io.materialmusic.animator.PlaybackDirector;
-import crazysheep.io.materialmusic.bean.SongDto;
+import crazysheep.io.materialmusic.bean.doubanfm.SongDto;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.FMService;
 import crazysheep.io.materialmusic.utils.StringUtils;
