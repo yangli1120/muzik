@@ -5,6 +5,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.fragment.ArtistsFragment;
+import crazysheep.io.materialmusic.fragment.GenresFragment;
 import crazysheep.io.materialmusic.fragment.PlaybackFragment;
 import crazysheep.io.materialmusic.fragment.PlaylistFragment;
 
@@ -15,11 +18,11 @@ import crazysheep.io.materialmusic.fragment.PlaylistFragment;
  */
 public class MusicPagerAdapter extends FragmentPagerAdapter {
 
-    private static String[] mTitles = new String[] {"播放列表", "流派", "音乐人", "专辑", "歌曲"};
+    private static String[] mTitles;
     @SuppressWarnings("unchecked")
     private static Class<? extends Fragment>[] mFts = new Class[] {
-            PlaylistFragment.class, PlaybackFragment.class,
-            PlaybackFragment.class, PlaybackFragment.class,
+            PlaylistFragment.class, ArtistsFragment.class,
+            GenresFragment.class, PlaybackFragment.class,
             PlaybackFragment.class
     };
 
@@ -28,6 +31,13 @@ public class MusicPagerAdapter extends FragmentPagerAdapter {
     public MusicPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         mContext = context;
+
+        mTitles = new String[] {
+                mContext.getString(R.string.tv_my_playlist),
+                mContext.getString(R.string.tv_artists),
+                mContext.getString(R.string.tv_genres),
+                "专辑", "歌曲"
+        };
     }
 
     @Override

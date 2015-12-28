@@ -18,5 +18,7 @@
 
     <string name="tv_local_music_title">Local Music</string>
     <string name="tv_default_playlist_name">all songs</string>
+    <string name="tv_my_playlist">my playlists</string>
     <string name="tv_genres">genres</string>
+    <string name="tv_artists">artists</string>
 </resources>

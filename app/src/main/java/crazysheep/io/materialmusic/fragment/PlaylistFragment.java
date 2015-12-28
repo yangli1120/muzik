@@ -25,7 +25,7 @@ import crazysheep.io.materialmusic.db.MediaStoreHelper;
  */
 public class PlaylistFragment extends BaseFragment {
 
-    @Bind(R.id.playlist_rv) RecyclerView mPlaylistRv;
+    @Bind(R.id.data_rv) RecyclerView mPlaylistRv;
     private GridLayoutManager mLayoutMgr;
     private PlaylistAdapter mAdapter;
 

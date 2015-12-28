@@ -14,8 +14,6 @@ import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.MainActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.MusicPagerAdapter;
-import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
-import crazysheep.io.materialmusic.db.MediaStoreHelper;
 import crazysheep.io.materialmusic.utils.Utils;
 
 /**

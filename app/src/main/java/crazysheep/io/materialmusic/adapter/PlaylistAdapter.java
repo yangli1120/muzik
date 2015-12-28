@@ -2,6 +2,7 @@ package crazysheep.io.materialmusic.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -52,11 +53,19 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
     public void onBindViewHolder(PlaylistHolder holder, int position) {
         LocalAlbumDto item = getItem(position);
 
+        // cancel request before
         Picasso.with(mContext)
-                .load(new File(item.getAlbumCover(mContext.getContentResolver())))
-                .fit()
-                .centerCrop()
-                .into(holder.coverIv);
+                .cancelRequest(holder.coverIv);
+
+        String coverPath = item.getAlbumCover(mContext.getContentResolver());
+        if(!TextUtils.isEmpty(coverPath))
+            Picasso.with(mContext)
+                    .load(new File(coverPath))
+                    .fit()
+                    .centerCrop()
+                    .into(holder.coverIv);
+        else
+            holder.coverIv.setImageResource(0);
         holder.nameTv.setText(item.album_name);
     }
 
