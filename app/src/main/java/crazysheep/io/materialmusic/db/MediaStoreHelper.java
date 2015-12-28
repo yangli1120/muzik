@@ -48,13 +48,14 @@ public class MediaStoreHelper {
     public static List<LocalArtistDto> getAllArtist(@NonNull ContentResolver resolver) {
         Cursor cursor = resolver.query(MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
                 LocalArtistDto.ARTIST_COLUMNS, null, null,
-                MediaStore.Audio.Artists.ARTIST_KEY + " ASC");
+                MediaStore.Audio.Artists.ARTIST + " ASC");
 
         List<LocalArtistDto> artistDtos = new ArrayList<>();
         if(!Utils.checkNull(cursor) && cursor.getCount() > 0) {
             cursor.moveToPosition(-1);
             while (cursor.moveToNext()) {
                 LocalArtistDto artistDto = LocalArtistDto.createFromCursor(cursor);
+                // find a no-null cover or until iterator done
                 for(LocalAlbumDto album : getAlbumsOfArtist(resolver, artistDto.artist_name))
                     if(!TextUtils.isEmpty(album.album_cover)) {
                         artistDto.artist_first_album_cover = album.album_cover;
@@ -68,6 +69,26 @@ public class MediaStoreHelper {
         }
 
         return artistDtos;
+    }
+
+    /**
+     * get all albums on external storage
+     * */
+    public static List<LocalAlbumDto> getAllAlbums(@NonNull ContentResolver resolver) {
+        Cursor cursor = resolver.query(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                LocalAlbumDto.ALBUM_COLUMNS, null, null,
+                MediaStore.Audio.Albums.ALBUM + " ASC");
+
+        List<LocalAlbumDto> albumDtos = new ArrayList<>();
+        if(!Utils.checkNull(cursor) && cursor.getCount() > 0) {
+            cursor.moveToPosition(-1);
+            while (cursor.moveToNext())
+                albumDtos.add(LocalAlbumDto.createFromCursor(cursor));
+
+            cursor.close();
+        }
+
+        return albumDtos;
     }
 
     /**
