@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.fragment.AlbumsFragment;
 import crazysheep.io.materialmusic.fragment.ArtistsFragment;
-import crazysheep.io.materialmusic.fragment.PlaybackFragment;
 import crazysheep.io.materialmusic.fragment.PlaylistFragment;
+import crazysheep.io.materialmusic.fragment.SongsFragment;
 
 /**
  * view pager adapter for LocalMusicAdapter
@@ -22,7 +22,7 @@ public class MusicPagerAdapter extends FragmentPagerAdapter {
     @SuppressWarnings("unchecked")
     private static Class<? extends Fragment>[] mFts = new Class[] {
             PlaylistFragment.class, ArtistsFragment.class,
-            AlbumsFragment.class, PlaybackFragment.class
+            AlbumsFragment.class, SongsFragment.class
     };
 
     private Context mContext;

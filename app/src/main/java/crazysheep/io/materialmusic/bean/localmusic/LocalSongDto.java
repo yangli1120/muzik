@@ -52,4 +52,6 @@ public class LocalSongDto {
     public String song_path;
     public long date_added;
     public long date_modified;
+
+    public String album_cover;
 }

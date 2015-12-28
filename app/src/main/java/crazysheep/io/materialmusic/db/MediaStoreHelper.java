@@ -33,8 +33,11 @@ public class MediaStoreHelper {
         List<LocalSongDto> songs = new ArrayList<>();
         if(!Utils.checkNull(cursor) && cursor.getCount() > 0) {
             cursor.moveToPosition(-1);
-            while(cursor.moveToNext())
-                songs.add(LocalSongDto.createFromCursor(cursor));
+            while(cursor.moveToNext()) {
+                LocalSongDto songDto = LocalSongDto.createFromCursor(cursor);
+                songDto.album_cover = getAlbumCover(resolver, songDto.album_id);
+                songs.add(songDto);
+            }
 
             cursor.close();
         }
