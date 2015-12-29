@@ -26,7 +26,7 @@ import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
  */
 public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolder, LocalSongDto> {
 
-    public SongsAdapter(@NonNull Context context, @NonNull List<LocalSongDto> data) {
+    public SongsAdapter(@NonNull Context context, List<LocalSongDto> data) {
         super(context, data);
     }
 

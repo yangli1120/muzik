@@ -27,7 +27,7 @@ import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
  */
 public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.ArtistHolder, LocalArtistDto> {
 
-    public ArtistsAdapter(@NonNull Context context, @NonNull List<LocalArtistDto> data) {
+    public ArtistsAdapter(@NonNull Context context, List<LocalArtistDto> data) {
         super(context, data);
     }
 
@@ -65,7 +65,7 @@ public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.Artis
                     .centerCrop()
                     .into(holder.coverIv);
         else
-            holder.coverIv.setImageResource(0);
+            holder.coverIv.setImageResource(R.drawable.place_holder);
 
         holder.nameTv.setText(item.artist_name);
     }

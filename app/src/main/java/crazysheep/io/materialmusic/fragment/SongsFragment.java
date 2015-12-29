@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.SongsAdapter;
-import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
+import crazysheep.io.materialmusic.db.RxDB;
+import crazysheep.io.materialmusic.utils.Utils;
+import rx.Subscription;
 
 /**
  * all local songs fragment
@@ -25,18 +30,50 @@ public class SongsFragment extends BaseFragment {
     private LinearLayoutManager mLayoutMgr;
     private SongsAdapter mAdapter;
 
+    private Subscription mSubsription;
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_songs, container, false);
         ButterKnife.bind(this, contentView);
 
         mLayoutMgr = new LinearLayoutManager(getActivity());
-        mAdapter = new SongsAdapter(getActivity(),
-                MediaStoreHelper.getAllSongs(getActivity().getContentResolver()));
+        mAdapter = new SongsAdapter(getActivity(), null);
         mSongsRv.setLayoutManager(mLayoutMgr);
         mSongsRv.setAdapter(mAdapter);
 
         return contentView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        querySongs();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if(!Utils.checkNull(mSubsription) && mSubsription.isUnsubscribed())
+            mSubsription.unsubscribe();
+    }
+
+    private void querySongs() {
+        mSubsription = RxDB.getAllSongs(getActivity().getContentResolver(),
+                new RxDB.OnQueryListener<LocalSongDto>() {
+                    @Override
+                    public void onResult(List<LocalSongDto> results) {
+                        mAdapter.setData(results);
+                    }
+
+                    @Override
+                    public void onError(String err) {
+                    }
+                });
+    }
+
 }

@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
-import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
+import crazysheep.io.materialmusic.db.RxDB;
+import crazysheep.io.materialmusic.utils.Utils;
+import rx.Subscription;
 
 /**
  * albums fragment
@@ -25,6 +30,8 @@ public class AlbumsFragment extends BaseFragment {
     private GridLayoutManager mLayoutMgr;
     private PlaylistAdapter mAdapter;
 
+    private Subscription mSubscription;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,12 +39,40 @@ public class AlbumsFragment extends BaseFragment {
         ButterKnife.bind(this, contentView);
 
         mLayoutMgr = new GridLayoutManager(getActivity(), 2);
-        mAdapter = new PlaylistAdapter(getActivity(),
-                MediaStoreHelper.getAllAlbums(getActivity().getContentResolver()));
+        mAdapter = new PlaylistAdapter(getActivity(), null);
         mAlbumsRv.setLayoutManager(mLayoutMgr);
         mAlbumsRv.setAdapter(mAdapter);
 
         return contentView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        queryAlbums();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if(!Utils.checkNull(mSubscription) && mSubscription.isUnsubscribed())
+            mSubscription.unsubscribe();
+    }
+
+    private void queryAlbums() {
+        mSubscription = RxDB.getAllAlbums(getActivity().getContentResolver(),
+                new RxDB.OnQueryListener<LocalAlbumDto>() {
+                    @Override
+                    public void onResult(List<LocalAlbumDto> results) {
+                        mAdapter.setData(results);
+                    }
+
+                    @Override
+                    public void onError(String err) {
+                    }
+                });
     }
 
 }

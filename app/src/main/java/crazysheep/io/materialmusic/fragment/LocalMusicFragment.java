@@ -40,6 +40,7 @@ public class LocalMusicFragment extends BaseFragment {
         mContentVp.setAdapter(mMusicAdapter);
         mContentVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mContentVp);
+        mContentVp.setOffscreenPageLimit(mMusicAdapter.getCount());
 
         return contentView;
     }

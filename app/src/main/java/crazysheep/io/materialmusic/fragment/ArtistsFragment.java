@@ -8,11 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.ArtistsAdapter;
-import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
+import crazysheep.io.materialmusic.db.RxDB;
+import crazysheep.io.materialmusic.utils.Utils;
+import rx.Subscription;
 
 /**
  * artist list fragment
@@ -25,18 +30,50 @@ public class ArtistsFragment extends BaseFragment {
     private GridLayoutManager mLayoutMgr;
     private ArtistsAdapter mAdapter;
 
+    private Subscription mSubscription;
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_artists, container, false);
         ButterKnife.bind(this, contentView);
 
         mLayoutMgr = new GridLayoutManager(getActivity(), 2);
-        mAdapter = new ArtistsAdapter(getActivity(),
-                MediaStoreHelper.getAllArtist(getActivity().getContentResolver()));
+        mAdapter = new ArtistsAdapter(getActivity(), null);
         mArtistsRv.setLayoutManager(mLayoutMgr);
         mArtistsRv.setAdapter(mAdapter);
 
         return contentView;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        queryArtists();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if(!Utils.checkNull(mSubscription) && mSubscription.isUnsubscribed())
+            mSubscription.unsubscribe();
+    }
+
+    private void queryArtists() {
+        mSubscription = RxDB.getAllArtists(getActivity().getContentResolver(),
+                new RxDB.OnQueryListener<LocalArtistDto>() {
+                    @Override
+                    public void onResult(List<LocalArtistDto> results) {
+                        mAdapter.setData(results);
+                    }
+
+                    @Override
+                    public void onError(String err) {
+                    }
+                });
+    }
+
 }

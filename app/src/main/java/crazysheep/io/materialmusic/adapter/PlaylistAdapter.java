@@ -65,7 +65,7 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
                     .centerCrop()
                     .into(holder.coverIv);
         else
-            holder.coverIv.setImageResource(0);
+            holder.coverIv.setImageResource(R.drawable.place_holder);
         holder.nameTv.setText(item.album_name);
     }
 
