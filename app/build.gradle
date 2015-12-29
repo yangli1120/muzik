@@ -96,6 +96,6 @@ dependencies {
     // easy parcelable
     compile 'com.hannesdorfmann.parcelableplease:annotation:1.0.1'
     apt 'com.hannesdorfmann.parcelableplease:processor:1.0.1'
-    // parallax recycler adapter
-    compile 'com.github.kanytu:android-parallax-recyclerview:v1.4'
+    // easy permissions
+    compile 'com.anthonycr.grant:permissions:1.0'
 }
