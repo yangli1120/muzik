@@ -98,6 +98,4 @@ dependencies {
     apt 'com.hannesdorfmann.parcelableplease:processor:1.0.1'
     // parallax recycler adapter
     compile 'com.github.kanytu:android-parallax-recyclerview:v1.4'
-    // system bar tint tool
-    compile 'com.readystatesoftware.systembartint:systembartint:1.0.3'
 }
