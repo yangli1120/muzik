@@ -20,6 +20,13 @@ public class ActivityUtils {
     }
 
     /**
+     * start activity
+     * */
+    public static void start(@NonNull Context context, @NonNull Intent intent) {
+        context.startActivity(intent);
+    }
+
+    /**
      * create a target intent
      * */
     public static Intent prepare(@NonNull Context context,

@@ -13,10 +13,13 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.PlaylistDetailActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
+import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.utils.ActivityUtils;
 
 /**
  * fragment show local playlist
@@ -40,6 +43,15 @@ public class PlaylistFragment extends BaseFragment {
         mLayoutMgr = new GridLayoutManager(getActivity(), 2);
         mPlaylistRv.setLayoutManager(mLayoutMgr);
         mPlaylistRv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ActivityUtils.start(getActivity(),
+                        ActivityUtils.prepare(getActivity(), PlaylistDetailActivity.class)
+                                .putExtra(PlaylistDetailActivity.EXTRA_ALBUM,
+                                        mAdapter.getItem(position)));
+            }
+        });
 
         initDefaultPlaylist();
 

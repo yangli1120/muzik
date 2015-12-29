@@ -1,15 +1,20 @@
 package crazysheep.io.materialmusic.bean.localmusic;
 
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+
+import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 
 /**
  * local song
  *
  * Created by crazysheep on 15/12/28.
  */
-public class LocalSongDto {
+@ParcelablePlease
+public class LocalSongDto implements Parcelable {
 
     public static final String[] MUSIC_COLUMNS = new String[] {
             MediaStore.Audio.AudioColumns._ID,
@@ -54,4 +59,26 @@ public class LocalSongDto {
     public long date_modified;
 
     public String album_cover;
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        LocalSongDtoParcelablePlease.writeToParcel(this, dest, flags);
+    }
+
+    public static final Creator<LocalSongDto> CREATOR = new Creator<LocalSongDto>() {
+        public LocalSongDto createFromParcel(Parcel source) {
+            LocalSongDto target = new LocalSongDto();
+            LocalSongDtoParcelablePlease.readFromParcel(target, source);
+            return target;
+        }
+
+        public LocalSongDto[] newArray(int size) {
+            return new LocalSongDto[size];
+        }
+    };
 }
