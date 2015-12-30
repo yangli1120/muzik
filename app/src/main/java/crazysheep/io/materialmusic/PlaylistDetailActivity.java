@@ -2,13 +2,16 @@ package crazysheep.io.materialmusic;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -24,7 +27,8 @@ import crazysheep.io.materialmusic.utils.Utils;
  *
  * Created by crazysheep on 15/12/29.
  */
-public class PlaylistDetailActivity extends BaseSwipeBackActivity {
+public class PlaylistDetailActivity extends BaseSwipeBackActivity implements View.OnClickListener,
+        SlidingUpPanelLayout.PanelSlideListener {
 
     public static final String EXTRA_ALBUM = "extra_album";
 
@@ -32,6 +36,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.data_rv) RecyclerView mSongsRv;
     @Bind(R.id.parallax_header_iv) ImageView mParallaxHeaderIv;
+    @Bind(R.id.shuffle_fab) FloatingActionButton mShuffleFab;
+    @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPl;
     private SongsAdapter mAdapter;
     private LinearLayoutManager mLayoutMgr;
 
@@ -45,6 +51,15 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity {
 
         parseIntent();
         initUI();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.shuffle_fab: {
+                // TODO show button play panel
+            }break;
+        }
     }
 
     @Override
@@ -76,10 +91,33 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity {
                     .into(mParallaxHeaderIv);
         mAdapter = new SongsAdapter(this, mAlbumDto.songs);
         mSongsRv.setAdapter(mAdapter);
+
+        // sliding up panel
+        mSlidingUpPl.setPanelSlideListener(this);
     }
 
     private void parseIntent() {
         mAlbumDto = getIntent().getParcelableExtra(EXTRA_ALBUM);
+    }
+
+    @Override
+    public void onPanelSlide(View panel, float slideOffset) {
+    }
+
+    @Override
+    public void onPanelCollapsed(View panel) {
+    }
+
+    @Override
+    public void onPanelExpanded(View panel) {
+    }
+
+    @Override
+    public void onPanelAnchored(View panel) {
+    }
+
+    @Override
+    public void onPanelHidden(View panel) {
     }
 
 }

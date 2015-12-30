@@ -98,4 +98,6 @@ dependencies {
     apt 'com.hannesdorfmann.parcelableplease:processor:1.0.1'
     // easy permissions
     compile 'com.anthonycr.grant:permissions:1.0'
+    // sliding up panel
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
 }
