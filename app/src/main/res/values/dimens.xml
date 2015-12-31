@@ -12,5 +12,7 @@
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="text_size_14">14sp</dimen>
 
+    <dimen name="half_1_dp">0.5dp</dimen>
+
     <dimen name="height_collapsing_sliding_up_panel">48dp</dimen>
 </resources>

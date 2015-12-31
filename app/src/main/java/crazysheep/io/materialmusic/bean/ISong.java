@@ -9,5 +9,7 @@ public interface ISong {
 
     String getName();
     String getUrl();
+    String getCover();
+    String getArtist();
     boolean isLocal();
 }

@@ -10,6 +10,7 @@ import java.lang.ref.WeakReference;
 
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.media.MusicPlayer;
+import crazysheep.io.materialmusic.utils.NotifyUtils;
 import crazysheep.io.materialmusic.utils.Utils;
 import de.greenrobot.event.EventBus;
 
@@ -45,6 +46,8 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
 
     private static final int MSG_TIK_TOK = 111;
     private static final int DURATION_TIK_TOK = 1000; // 1s
+
+    public static final int NOTIFY_MUSIC_ID = 9527;
 
     private boolean isInit = false;
 
@@ -91,6 +94,7 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        stopForeground(true);
         EventBus.getDefault().unregister(this);
 
         isInit = false;
@@ -148,6 +152,10 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
             MusicPlayer.getInstance(this).play(song.getUrl());
 
         toggleTikTokEvent(true);
+
+        // show foreground notify
+        startForeground(NOTIFY_MUSIC_ID,
+                NotifyUtils.buildWithSong(this, mCurrentSong, NOTIFY_MUSIC_ID, true));
     }
 
     public void pause() {

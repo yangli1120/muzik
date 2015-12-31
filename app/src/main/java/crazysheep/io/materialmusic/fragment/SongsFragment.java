@@ -26,6 +26,7 @@ import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
+import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -124,6 +125,8 @@ public class SongsFragment extends BaseFragment {
 
     @SuppressWarnings("unused")
     public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
+        L.d("current song: " + mCurrentSong + ", event song: " + event.currentSong);
+
         if(Utils.checkNull(mCurrentSong)
                 || !event.currentSong.getUrl().equals(mCurrentSong.getUrl())) {
             mCurrentSong = event.currentSong;

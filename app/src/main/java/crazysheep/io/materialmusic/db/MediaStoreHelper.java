@@ -29,7 +29,7 @@ public class MediaStoreHelper {
                 LocalSongDto.MUSIC_COLUMNS,
                 MediaStore.Audio.AudioColumns.IS_MUSIC + " = ?",
                 new String[] {String.valueOf(1)}, // 1 stand for true
-                MediaStore.Audio.AudioColumns.DATE_MODIFIED + " ASC");
+                MediaStore.Audio.AudioColumns.DATE_MODIFIED + " DESC");
         List<LocalSongDto> songs = new ArrayList<>();
         if(!Utils.checkNull(cursor) && cursor.getCount() > 0) {
             cursor.moveToPosition(-1);

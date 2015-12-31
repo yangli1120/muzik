@@ -100,6 +100,16 @@ public class LocalSongDto implements Parcelable, ISong {
     }
 
     @Override
+    public String getCover() {
+        return album_cover;
+    }
+
+    @Override
+    public String getArtist() {
+        return artist_name;
+    }
+
+    @Override
     public String toString() {
         return song_name;
     }

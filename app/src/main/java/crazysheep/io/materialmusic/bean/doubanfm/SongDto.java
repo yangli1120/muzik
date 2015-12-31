@@ -72,4 +72,14 @@ public class SongDto implements ISong {
     public boolean isLocal() {
         return false;
     }
+
+    @Override
+    public String getCover() {
+        return picture;
+    }
+
+    @Override
+    public String getArtist() {
+        return artist;
+    }
 }
