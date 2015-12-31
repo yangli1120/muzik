@@ -7,12 +7,21 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * play music
  *
  * Created by crazysheep on 15/12/21.
  */
 public class MusicPlayer {
+
+    /////////////////////// event bus /////////////////////////////////
+
+    public static class EventSongPlayDone {
+    }
+
+    ///////////////////////////////////////////////////////////////////
 
     private static MusicPlayer mMusicPlayer;
     private Context mContext;
@@ -50,7 +59,7 @@ public class MusicPlayer {
 
     public void play(@NonNull String url) {
         if(isPlaying() || isPause() || isPreparing())
-            stop();
+            getPlayer().reset();
 
         mCurState = STATE_PREPARING;
         mUrl = url;
@@ -94,6 +103,9 @@ public class MusicPlayer {
 
         getPlayer().stop();
         getPlayer().reset();
+
+        // notify current song play done
+        EventBus.getDefault().post(new EventSongPlayDone());
     }
 
     private void start() {
@@ -113,6 +125,7 @@ public class MusicPlayer {
         mCurState = STATE_IDLE;
 
         mContext = null;
+        mMusicPlayer = null;
     }
 
     public void toggleVolume(boolean on) {
@@ -144,6 +157,10 @@ public class MusicPlayer {
 
     public boolean isStop() {
         return mCurState == STATE_STOP;
+    }
+
+    public boolean isIdle() {
+        return mCurState == STATE_IDLE;
     }
 
     public boolean isCurrentUrl(@NonNull String url) {

@@ -26,6 +26,8 @@ import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
  */
 public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolder, LocalSongDto> {
 
+    private int mHighlightPos = -1;
+
     public SongsAdapter(@NonNull Context context, List<LocalSongDto> data) {
         super(context, data);
     }
@@ -52,6 +54,28 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
             holder.coverIv.setImageResource(R.drawable.place_holder);
         holder.artistTv.setText(item.artist_name);
         holder.nameTv.setText(item.song_name);
+
+        if(mHighlightPos == position)
+            holder.highlightV.setVisibility(View.VISIBLE);
+        else
+            holder.highlightV.setVisibility(View.INVISIBLE);
+    }
+
+    public void highlightItem(int position) {
+        // before highlight current song, notify the old item refresh
+        int oldHighlightPos = mHighlightPos;
+        mHighlightPos = position;
+        if(oldHighlightPos >= 0)
+            notifyItemChanged(oldHighlightPos);
+        notifyItemChanged(mHighlightPos);
+    }
+
+    public int findPositionByUrl(@NonNull String url) {
+        for(int i = 0; i < getItemCount(); i++)
+            if(url.equals(getItem(i).getUrl()))
+                return i;
+
+        return -1;
     }
 
     protected static class SongHolder extends RecyclerView.ViewHolder {
@@ -59,6 +83,7 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
         @Bind(R.id.song_cover_iv) ImageView coverIv;
         @Bind(R.id.song_artist_tv) TextView artistTv;
         @Bind(R.id.song_name_tv) TextView nameTv;
+        @Bind(R.id.highlight_v) View highlightV;
 
         public SongHolder(@NonNull View view) {
             super(view);

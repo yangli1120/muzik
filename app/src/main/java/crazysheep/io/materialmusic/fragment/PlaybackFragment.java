@@ -187,10 +187,10 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
     // event bus message receiver
     @SuppressWarnings("unused")
     public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
-        if(mCurSong.sid != event.currentSong.sid) {
-            mCurSong = event.currentSong;
+        if(mCurSong.sid != ((SongDto)event.currentSong).sid) {
+            mCurSong = (SongDto)event.currentSong;
             updateCurrentSongUI();
-            mMusicSb.setMax(event.currentSong.length);
+            mMusicSb.setMax(mCurSong.length);
         }
 
         // same song, just update progress

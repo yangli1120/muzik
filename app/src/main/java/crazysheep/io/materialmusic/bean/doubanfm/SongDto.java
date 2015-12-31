@@ -2,12 +2,14 @@ package crazysheep.io.materialmusic.bean.doubanfm;
 
 import java.util.List;
 
+import crazysheep.io.materialmusic.bean.ISong;
+
 /**
  * song dto
  *
  * Created by crazysheep on 15/12/20.
  */
-public class SongDto {
+public class SongDto implements ISong {
 
     /*
     {
@@ -56,4 +58,18 @@ public class SongDto {
     public String albumtitle;
     public String alert_msg;
 
+    @Override
+    public String getName() {
+        return title;
+    }
+
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public boolean isLocal() {
+        return false;
+    }
 }

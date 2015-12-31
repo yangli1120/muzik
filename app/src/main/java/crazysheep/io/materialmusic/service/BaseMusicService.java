@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 
-import crazysheep.io.materialmusic.bean.doubanfm.SongDto;
+import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.media.MusicPlayer;
 import crazysheep.io.materialmusic.utils.Utils;
 import de.greenrobot.event.EventBus;
@@ -20,18 +20,18 @@ import de.greenrobot.event.EventBus;
  *
  * Created by crazysheep on 15/12/25.
  */
-public abstract class BaseMusicService extends Service {
+public abstract class BaseMusicService<SD extends ISong> extends Service {
 
     /////////////////// event bus /////////////////////////
 
     public static class EventCurrentSong {
-        public SongDto currentSong;
+        public ISong currentSong;
         /**
          * seconds
          * */
         public int progress;
 
-        public EventCurrentSong(@NonNull SongDto songDto, int progress) {
+        public EventCurrentSong(@NonNull ISong songDto, int progress) {
             currentSong = songDto;
             this.progress = progress;
         }
@@ -73,20 +73,25 @@ public abstract class BaseMusicService extends Service {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected MyHandler mHandler = new MyHandler(this);
 
-    private SongDto mCurrentSong;
+    private SD mCurrentSong;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         isInit = true;
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        EventBus.getDefault().unregister(this);
 
         isInit = false;
         MusicPlayer.getInstance(this).release();
@@ -94,6 +99,17 @@ public abstract class BaseMusicService extends Service {
 
     public boolean isStartup() {
         return isInit;
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(@NonNull MusicPlayer.EventSongPlayDone event) {
+        playDone();
+    }
+
+    /**
+     * current song play done
+     * */
+    protected void playDone() {
     }
 
     //////////////// event action //////////////////////////////
@@ -115,27 +131,33 @@ public abstract class BaseMusicService extends Service {
         return MusicPlayer.getInstance(this).getProgress();
     }
 
-    public void play(@NonNull SongDto song) {
+    public void play(@NonNull SD song) {
         play(song, false);
     }
 
     /**
      * if force is true, init to play even the song is same one.
      * */
-    public void play(@NonNull SongDto song, boolean force) {
+    public void play(@NonNull SD song, boolean force) {
         mCurrentSong = song;
 
         if(!force && MusicPlayer.getInstance(this).isPause()
-                && MusicPlayer.getInstance(this).isCurrentUrl(song.url))
+                && MusicPlayer.getInstance(this).isCurrentUrl(song.getUrl()))
             MusicPlayer.getInstance(this).resume();
         else
-            MusicPlayer.getInstance(this).play(song.url);
+            MusicPlayer.getInstance(this).play(song.getUrl());
 
         toggleTikTokEvent(true);
     }
 
     public void pause() {
         MusicPlayer.getInstance(this).pause();
+
+        toggleTikTokEvent(false);
+    }
+
+    public void resume() {
+        MusicPlayer.getInstance(this).resume();
 
         toggleTikTokEvent(false);
     }
@@ -148,6 +170,10 @@ public abstract class BaseMusicService extends Service {
 
     public boolean isPlaying() {
         return MusicPlayer.getInstance(this).isPlaying();
+    }
+
+    public boolean isPause() {
+        return MusicPlayer.getInstance(this).isPause();
     }
 
     public void notifyPlaying() {

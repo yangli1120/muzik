@@ -8,13 +8,15 @@ import android.support.annotation.NonNull;
 
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 
+import crazysheep.io.materialmusic.bean.ISong;
+
 /**
  * local song
  *
  * Created by crazysheep on 15/12/28.
  */
 @ParcelablePlease
-public class LocalSongDto implements Parcelable {
+public class LocalSongDto implements Parcelable, ISong {
 
     public static final String[] MUSIC_COLUMNS = new String[] {
             MediaStore.Audio.AudioColumns._ID,
@@ -81,4 +83,24 @@ public class LocalSongDto implements Parcelable {
             return new LocalSongDto[size];
         }
     };
+
+    @Override
+    public String getName() {
+        return song_name;
+    }
+
+    @Override
+    public String getUrl() {
+        return song_path;
+    }
+
+    @Override
+    public boolean isLocal() {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return song_name;
+    }
 }

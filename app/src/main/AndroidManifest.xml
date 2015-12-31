@@ -35,6 +35,7 @@
         </activity>
 
         <service android:name=".service.FMService"/>
+        <service android:name=".service.MusicService" />
     </application>
 
 </manifest>

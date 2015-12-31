@@ -23,7 +23,7 @@ import retrofit.Retrofit;
  *
  * Created by crazysheep on 15/12/21.
  */
-public class FMService extends BaseMusicService {
+public class FMService extends BaseMusicService<SongDto> {
 
     ////////////////// event bus /////////////////////////
 

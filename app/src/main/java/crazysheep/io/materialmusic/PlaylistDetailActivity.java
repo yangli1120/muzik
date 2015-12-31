@@ -1,6 +1,12 @@
 package crazysheep.io.materialmusic;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,17 +24,21 @@ import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.adapter.SongsAdapter;
+import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
+import crazysheep.io.materialmusic.service.BaseMusicService;
+import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
+import de.greenrobot.event.EventBus;
 
 /**
  * show contain songs of a playlist
  *
  * Created by crazysheep on 15/12/29.
  */
-public class PlaylistDetailActivity extends BaseSwipeBackActivity implements View.OnClickListener,
-        SlidingUpPanelLayout.PanelSlideListener {
+public class PlaylistDetailActivity extends BaseSwipeBackActivity implements View.OnClickListener {
 
     public static final String EXTRA_ALBUM = "extra_album";
 
@@ -43,6 +53,24 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
     private LocalAlbumDto mAlbumDto;
 
+    private ISong mCurrentSong;
+
+    private boolean isServiceBind;
+    private MusicService mMusicService;
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mMusicService = ((MusicService.MusicBinder) service).getService();
+            isServiceBind = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mMusicService = null;
+            isServiceBind = false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +82,43 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        EventBus.getDefault().register(this);
+        bindService(new Intent(this, MusicService.class), mConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        EventBus.getDefault().unregister(this);
+        if(isServiceBind)
+            unbindService(mConnection);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.shuffle_fab: {
                 // TODO show button play panel
+                if(isServiceBind) {
+                    if(mMusicService.isPause()) {
+                        mMusicService.resume();
+
+                        mShuffleFab.setImageResource(R.drawable.ic_pause);
+                    } else if(!mMusicService.isPlaying()) {
+                        mMusicService.play(mAlbumDto.songs);
+                        mMusicService.shuffle();
+
+                        mShuffleFab.setImageResource(R.drawable.ic_pause);
+                    } else {
+                        mMusicService.pause();
+
+                        mShuffleFab.setImageResource(R.drawable.ic_shuffle);
+                    }
+                }
             }break;
         }
     }
@@ -82,6 +143,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
+        mShuffleFab.setOnClickListener(this);
+
         mLayoutMgr = new LinearLayoutManager(this);
         mSongsRv.setLayoutManager(mLayoutMgr);
 
@@ -90,34 +153,31 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                     .load(new File(mAlbumDto.album_cover))
                     .into(mParallaxHeaderIv);
         mAdapter = new SongsAdapter(this, mAlbumDto.songs);
+        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if(isServiceBind) {
+                    if(mMusicService.isPlaying() || mMusicService.isPause())
+                        mMusicService.playItem(position);
+                    else
+                        mMusicService.play(mAlbumDto.songs);
+                }
+            }
+        });
         mSongsRv.setAdapter(mAdapter);
-
-        // sliding up panel
-        mSlidingUpPl.setPanelSlideListener(this);
     }
 
     private void parseIntent() {
         mAlbumDto = getIntent().getParcelableExtra(EXTRA_ALBUM);
     }
 
-    @Override
-    public void onPanelSlide(View panel, float slideOffset) {
-    }
-
-    @Override
-    public void onPanelCollapsed(View panel) {
-    }
-
-    @Override
-    public void onPanelExpanded(View panel) {
-    }
-
-    @Override
-    public void onPanelAnchored(View panel) {
-    }
-
-    @Override
-    public void onPanelHidden(View panel) {
+    @SuppressWarnings("unused")
+    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
+        if(Utils.checkNull(mCurrentSong)
+                || !event.currentSong.getUrl().equals(mCurrentSong.getUrl())) {
+            mCurrentSong = event.currentSong;
+            mAdapter.highlightItem(mAdapter.findPositionByUrl(event.currentSong.getUrl()));
+        }
     }
 
 }
