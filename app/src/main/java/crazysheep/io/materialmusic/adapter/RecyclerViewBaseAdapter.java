@@ -53,6 +53,10 @@ public abstract class RecyclerViewBaseAdapter<VH extends RecyclerView.ViewHolder
         notifyDataSetChanged();
     }
 
+    public List<DT> getData() {
+        return mItems;
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         mOnItemClickListener = listener;
     }

@@ -119,8 +119,10 @@ public class MusicPlayer {
 
         if(isPlaying() || isPause())
             stop();
-        mPlayer.release();
-        mPlayer = null;
+        if(mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
+        }
 
         mCurState = STATE_IDLE;
 
