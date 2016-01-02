@@ -77,6 +77,9 @@ public class MusicPlayer {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     stop();
+
+                    // notify current song play done
+                    EventBus.getDefault().post(new EventSongPlayDone());
                 }
             });
         } catch (IOException e) {
@@ -103,9 +106,6 @@ public class MusicPlayer {
 
         getPlayer().stop();
         getPlayer().reset();
-
-        // notify current song play done
-        EventBus.getDefault().post(new EventSongPlayDone());
     }
 
     private void start() {

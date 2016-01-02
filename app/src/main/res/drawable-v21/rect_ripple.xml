@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="?colorNavigationItemHighlight">
+    android:color="@color/color_ripple">
 
-    <item>
+    <item android:id="@android:id/mask">
         <selector >
             <item android:state_checked="true">
                 <shape android:shape="rectangle">
-                    <solid android:color="?colorNavigationItemHighlight" />
+                    <solid android:color="@color/color_ripple" />
                 </shape>
             </item>
             <item>
-                <color android:color="@android:color/transparent" />
+                <color android:color="@android:color/white" />
             </item>
         </selector>
     </item>

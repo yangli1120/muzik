@@ -28,6 +28,7 @@ import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.adapter.SongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
+import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
@@ -109,8 +110,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
                         mShuffleFab.setImageResource(R.drawable.ic_pause);
                     } else if(!mMusicService.isPlaying()) {
-                        mMusicService.play(mAlbumDto.songs);
-                        mMusicService.shuffle();
+                        mMusicService.play(mAlbumDto.songs, MusicConstants.PLAY_SHUFFLE);
 
                         mShuffleFab.setImageResource(R.drawable.ic_pause);
                     } else {

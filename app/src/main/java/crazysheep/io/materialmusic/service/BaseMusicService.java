@@ -154,20 +154,23 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
         toggleTikTokEvent(true);
 
         // show foreground notify
-        startForeground(NOTIFY_MUSIC_ID,
-                NotifyUtils.buildWithSong(this, mCurrentSong, NOTIFY_MUSIC_ID, true));
+        updateNotify();
     }
 
     public void pause() {
         MusicPlayer.getInstance(this).pause();
 
         toggleTikTokEvent(false);
+
+        updateNotify();
     }
 
     public void resume() {
         MusicPlayer.getInstance(this).resume();
 
         toggleTikTokEvent(false);
+
+        updateNotify();
     }
 
     public void stop() {
@@ -176,8 +179,23 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
         toggleTikTokEvent(false);
     }
 
+    public void stopAndRelease() {
+        stop();
+        MusicPlayer.getInstance(this).release();
+    }
+
+    private void updateNotify() {
+        startForeground(NOTIFY_MUSIC_ID,
+                NotifyUtils.buildWithSong(this, mCurrentSong, NOTIFY_MUSIC_ID,
+                        isPlaying() || isPrepare()));
+    }
+
     public boolean isPlaying() {
         return MusicPlayer.getInstance(this).isPlaying();
+    }
+
+    public boolean isPrepare() {
+        return MusicPlayer.getInstance(this).isPreparing();
     }
 
     public boolean isPause() {

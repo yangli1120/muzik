@@ -17,6 +17,7 @@ import java.io.File;
 import crazysheep.io.materialmusic.MainActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.bean.ISong;
+import crazysheep.io.materialmusic.constants.MusicConstants;
 
 /**
  * notification utils
@@ -30,23 +31,42 @@ public class NotifyUtils {
      * */
     public static Notification buildWithSong(@NonNull Context context, @NonNull ISong song,
                                              int notifyId, boolean isPlaying) {
+        PendingIntent playOrPause = PendingIntent.getBroadcast(context, 0,
+                new Intent(isPlaying ? MusicConstants.ACTION_PAUSE : MusicConstants.ACTION_PLAY),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
         // big layout
-        RemoteViews bgLayout = new RemoteViews(context.getApplicationContext().getPackageName(),
+        RemoteViews bigLayout = new RemoteViews(context.getPackageName(),
                 R.layout.layout_music_notify_big);
-        bgLayout.setTextViewText(R.id.song_name_tv, song.getName());
-        bgLayout.setTextViewText(R.id.song_artist_tv, song.getArtist());
-        bgLayout.setImageViewResource(R.id.song_cover_iv, R.drawable.place_holder);
-        bgLayout.setImageViewResource(R.id.song_play_iv, isPlaying
-                ? R.drawable.ic_pause_circle_outline : R.drawable.ic_play_circle_outline);
+        bigLayout.setTextViewText(R.id.song_name_tv, song.getName());
+        bigLayout.setTextViewText(R.id.song_artist_tv, song.getArtist());
+        bigLayout.setOnClickPendingIntent(R.id.song_next_iv,
+                PendingIntent.getBroadcast(context, 0, new Intent(MusicConstants.ACTION_NEXT),
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        bigLayout.setOnClickPendingIntent(R.id.song_previous_iv,
+                PendingIntent.getBroadcast(context, 0, new Intent(MusicConstants.ACTION_PREVIOUS),
+                        PendingIntent.FLAG_CANCEL_CURRENT));
+        bigLayout.setImageViewResource(R.id.song_play_iv,
+                isPlaying ? R.drawable.ic_pause_circle_outline : R.drawable.ic_play_circle_outline);
+        bigLayout.setOnClickPendingIntent(R.id.song_play_iv, playOrPause);
+        bigLayout.setOnClickPendingIntent(R.id.song_stop_iv,
+                PendingIntent.getBroadcast(context, 0, new Intent(MusicConstants.ACTION_STOP),
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        bigLayout.setImageViewResource(R.id.song_cover_iv, R.drawable.place_holder);
 
         // small layout
         RemoteViews smallLayout = new RemoteViews(context.getPackageName(),
                 R.layout.layout_music_notify_small);
         smallLayout.setTextViewText(R.id.song_name_tv, song.getName());
         smallLayout.setTextViewText(R.id.song_artist_tv, song.getArtist());
+        smallLayout.setOnClickPendingIntent(R.id.song_next_iv,
+                PendingIntent.getBroadcast(context, 0, new Intent(MusicConstants.ACTION_NEXT),
+                        PendingIntent.FLAG_UPDATE_CURRENT));
+        smallLayout.setImageViewResource(R.id.song_play_iv,
+                isPlaying ? R.drawable.ic_pause_circle_outline : R.drawable.ic_play_circle_outline);
+        smallLayout.setOnClickPendingIntent(R.id.song_play_iv,
+                playOrPause);
         smallLayout.setImageViewResource(R.id.song_cover_iv, R.drawable.place_holder);
-        smallLayout.setImageViewResource(R.id.song_play_iv, isPlaying
-                ? R.drawable.ic_play_circle_outline : R.drawable.ic_pause_circle_outline);
 
         Intent launcherIntent = new Intent(context, MainActivity.class);
         launcherIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -54,30 +74,42 @@ public class NotifyUtils {
         PendingIntent contentPI = PendingIntent.getActivity(context, notifyId,
                 launcherIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+
+        int largeIconSize = (int)Utils.dp2px(context.getResources(), 64);
         android.support.v4.app.NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(context)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setTicker(context.getText(R.string.app_name))
+                .setShowWhen(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContent(smallLayout)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setContentIntent(contentPI)
+                .setDeleteIntent(PendingIntent.getBroadcast(context, 0,
+                        new Intent(MusicConstants.ACTION_STOP), PendingIntent.FLAG_UPDATE_CURRENT))
+                .setContentTitle(song.getName())
+                .setContentText(song.getArtist())
                 .setOngoing(true);
 
         Notification notify = builder.build();
-        notify.bigContentView = bgLayout;
+        notify.bigContentView = bigLayout;
 
         // load song cover
         if(!TextUtils.isEmpty(song.getCover())) {
             Uri uri = song.isLocal() ? Uri.fromFile(new File(song.getCover()))
                     : Uri.parse(song.getCover());
+
             Picasso.with(context)
                     .load(uri)
+                    .resize(largeIconSize, largeIconSize)
                     .error(R.drawable.place_holder)
-                    .into(smallLayout, R.id.song_cover_iv, notifyId, notify);
+                    .into(notify.contentView, R.id.song_cover_iv, notifyId, notify);
             Picasso.with(context)
                     .load(uri)
+                    .resize(largeIconSize, largeIconSize)
                     .error(R.drawable.place_holder)
-                    .into(bgLayout, R.id.song_cover_iv, notifyId, notify);
+                    .into(notify.bigContentView, R.id.song_cover_iv, notifyId, notify);
         }
 
         return notify;

@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="64dp"
+    android:orientation="horizontal"
+    android:background="@drawable/rect_ripple"
+    android:foreground="@drawable/rect_ripple">
 
     <ImageView
         android:id="@+id/song_cover_iv"
-        android:layout_width="56dp"
+        android:layout_width="64dp"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"/>
@@ -22,7 +24,7 @@
         <TextView
             android:id="@+id/song_name_tv"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="37dp"
             android:gravity="center_vertical"
             style="@style/MyTextTheme"
             android:singleLine="true"
@@ -34,7 +36,7 @@
         <TextView
             android:id="@+id/song_artist_tv"
             android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_height="27dp"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:maxLines="1"
@@ -44,18 +46,22 @@
             android:textSize="15sp"
             android:text="周杰伦"/>
     </LinearLayout>
-    <ImageView
+    <ImageButton
         android:id="@+id/song_play_iv"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@drawable/ic_pause_circle_outline"/>
-    <ImageView
+        android:src="@drawable/ic_pause_circle_outline"
+        android:background="@drawable/rect_ripple"
+        android:foreground="@drawable/rect_ripple"/>
+    <ImageButton
         android:id="@+id/song_next_iv"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:scaleType="center"
-        android:src="@drawable/ic_skip_next_grey"/>
+        android:src="@drawable/ic_skip_next_grey"
+        android:background="@drawable/rect_ripple"
+        android:foreground="@drawable/rect_ripple"/>
 </LinearLayout>
