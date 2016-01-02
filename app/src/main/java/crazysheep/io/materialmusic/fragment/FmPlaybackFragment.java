@@ -41,7 +41,7 @@ import de.greenrobot.event.EventBus;
  *
  * Created by crazysheep on 15/12/20.
  */
-public class PlaybackFragment extends BaseFragment implements View.OnClickListener {
+public class FmPlaybackFragment extends BaseFragment implements View.OnClickListener {
 
     @Bind(R.id.song_next_iv) ImageView mSongNextIv;
     @Bind(R.id.song_artist_tv) TextView mArtistTv;
@@ -90,7 +90,7 @@ public class PlaybackFragment extends BaseFragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View contentView = inflater.inflate(R.layout.fragment_playback, container, false);
+        View contentView = inflater.inflate(R.layout.fragment_fm_playback, container, false);
         ButterKnife.bind(this, contentView);
 
         initUI();

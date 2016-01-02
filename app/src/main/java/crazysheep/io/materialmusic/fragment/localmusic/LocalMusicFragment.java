@@ -1,4 +1,4 @@
-package crazysheep.io.materialmusic.fragment;
+package crazysheep.io.materialmusic.fragment.localmusic;
 
 import android.Manifest;
 import android.os.Bundle;
@@ -19,6 +19,7 @@ import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.MainActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.MusicPagerAdapter;
+import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.utils.Utils;
 
 /**

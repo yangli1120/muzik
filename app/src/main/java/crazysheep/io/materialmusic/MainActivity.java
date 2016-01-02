@@ -14,8 +14,8 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import crazysheep.io.materialmusic.fragment.LocalMusicFragment;
-import crazysheep.io.materialmusic.fragment.PlaybackFragment;
+import crazysheep.io.materialmusic.fragment.FmPlaybackFragment;
+import crazysheep.io.materialmusic.fragment.localmusic.LocalMusicFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -54,7 +54,7 @@ public class MainActivity extends BaseActivity
         mNavView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.content_fl, new LocalMusicFragment(), PlaybackFragment.TAG)
+                .replace(R.id.content_fl, new LocalMusicFragment(), FmPlaybackFragment.TAG)
                 .commitAllowingStateLoss();
         mNavView.getMenu().findItem(R.id.nav_local).setChecked(true);
     }

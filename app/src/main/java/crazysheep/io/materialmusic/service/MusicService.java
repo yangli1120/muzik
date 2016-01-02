@@ -160,6 +160,10 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
         makePlaylist();
     }
 
+    public void next() {
+        calculateAndPlayNextSong(true);
+    }
+
     private void calculateAndPlayNextSong(boolean isUserAction) {
         if(!isUserAction && mCurPlayType == MusicConstants.PLAY_ORDER
                 && mCurPlayPos == mPlaylist.size() - 1) {

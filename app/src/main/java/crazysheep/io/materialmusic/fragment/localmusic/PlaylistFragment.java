@@ -1,4 +1,4 @@
-package crazysheep.io.materialmusic.fragment;
+package crazysheep.io.materialmusic.fragment.localmusic;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +19,7 @@ import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
 import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.utils.ActivityUtils;
 
 /**

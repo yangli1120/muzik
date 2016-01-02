@@ -1,5 +1,10 @@
 package crazysheep.io.materialmusic.bean.doubanfm;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
+
 import java.util.List;
 
 import crazysheep.io.materialmusic.bean.ISong;
@@ -9,7 +14,8 @@ import crazysheep.io.materialmusic.bean.ISong;
  *
  * Created by crazysheep on 15/12/20.
  */
-public class SongDto implements ISong {
+@ParcelablePlease
+public class SongDto implements ISong, Parcelable {
 
     /*
     {
@@ -82,4 +88,26 @@ public class SongDto implements ISong {
     public String getArtist() {
         return artist;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        SongDtoParcelablePlease.writeToParcel(this, dest, flags);
+    }
+
+    public static final Creator<SongDto> CREATOR = new Creator<SongDto>() {
+        public SongDto createFromParcel(Parcel source) {
+            SongDto target = new SongDto();
+            SongDtoParcelablePlease.readFromParcel(target, source);
+            return target;
+        }
+
+        public SongDto[] newArray(int size) {
+            return new SongDto[size];
+        }
+    };
 }

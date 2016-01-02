@@ -18,9 +18,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
+import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
 
 /**
- * adapter for playlist at {@link crazysheep.io.materialmusic.fragment.PlaylistFragment}
+ * adapter for playlist at {@link PlaylistFragment}
  *
  * Created by crazysheep on 15/12/17.
  */

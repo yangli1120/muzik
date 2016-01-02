@@ -9,10 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.view.animation.AccelerateInterpolator;
 
+import crazysheep.io.materialmusic.fragment.FmPlaybackFragment;
 import crazysheep.io.materialmusic.widget.SimpleAnimatorListener;
 
 /**
- * fab alpha animator at {@link crazysheep.io.materialmusic.fragment.PlaybackFragment}
+ * fab alpha animator at {@link FmPlaybackFragment}
  *
  * Created by crazysheep on 15/12/21.
  */

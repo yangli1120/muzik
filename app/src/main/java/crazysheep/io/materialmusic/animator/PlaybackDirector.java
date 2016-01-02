@@ -5,13 +5,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.OvershootInterpolator;
 
 import com.nineoldandroids.animation.Animator;
 
+import crazysheep.io.materialmusic.fragment.FmPlaybackFragment;
 import crazysheep.io.materialmusic.utils.SystemUIHelper;
 import crazysheep.io.materialmusic.utils.ViewUtils;
 import io.codetail.animation.SupportAnimator;
@@ -20,7 +17,7 @@ import io.codetail.animation.arcanimator.ArcAnimator;
 import io.codetail.animation.arcanimator.Side;
 
 /**
- * direct the playback reveal animator at {@link crazysheep.io.materialmusic.fragment.PlaybackFragment}
+ * direct the playback reveal animator at {@link FmPlaybackFragment}
  *
  * Created by crazysheep on 15/12/20.
  */

@@ -6,10 +6,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import crazysheep.io.materialmusic.R;
-import crazysheep.io.materialmusic.fragment.AlbumsFragment;
-import crazysheep.io.materialmusic.fragment.ArtistsFragment;
-import crazysheep.io.materialmusic.fragment.PlaylistFragment;
-import crazysheep.io.materialmusic.fragment.SongsFragment;
+import crazysheep.io.materialmusic.fragment.localmusic.AlbumsFragment;
+import crazysheep.io.materialmusic.fragment.localmusic.ArtistsFragment;
+import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
+import crazysheep.io.materialmusic.fragment.localmusic.SongsFragment;
 
 /**
  * view pager adapter for LocalMusicAdapter

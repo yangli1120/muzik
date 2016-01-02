@@ -1,4 +1,4 @@
-package crazysheep.io.materialmusic.fragment;
+package crazysheep.io.materialmusic.fragment.localmusic;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,6 +24,7 @@ import crazysheep.io.materialmusic.adapter.SongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
 import crazysheep.io.materialmusic.db.RxDB;
+import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.L;

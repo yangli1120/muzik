@@ -24,4 +24,8 @@
     <color name="n_nav_item_hl_bg">#646b6f</color>
     <color name="n_root_bg">#212b30</color>
 
+    <!-- text color -->
+    <color name="text_grey_light">#878787</color>
+    <color name="text_grey_dark">#1d1c1c</color>
+
 </resources>
