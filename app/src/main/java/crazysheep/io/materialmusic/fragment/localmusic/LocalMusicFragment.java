@@ -46,6 +46,13 @@ public class LocalMusicFragment extends BaseFragment {
         return contentView;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // TODO
+    }
+
     private void requestStoragePermission() {
         PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(),
                 new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},

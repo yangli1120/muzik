@@ -16,9 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
@@ -32,11 +30,11 @@ import crazysheep.io.materialmusic.adapter.SongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.constants.MusicConstants;
+import crazysheep.io.materialmusic.fragment.localmusic.MiniPlayerFragment;
 import crazysheep.io.materialmusic.fragment.localmusic.PlaybackFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
-import crazysheep.io.materialmusic.widget.PlayOrPauseImageButton;
 import crazysheep.io.materialmusic.widget.SimplePanelSlideListener;
 import de.greenrobot.event.EventBus;
 
@@ -55,12 +53,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     @Bind(R.id.parallax_header_iv) ImageView mParallaxHeaderIv;
     @Bind(R.id.shuffle_fab) FloatingActionButton mShuffleFab;
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPl;
-    @Bind(R.id.song_name_tv) TextView mBottomSongNameTv;
-    @Bind(R.id.song_artist_tv) TextView mBottomSongArtistTv;
-    @Bind(R.id.song_cover_iv) ImageView mBottomSongCoverIv;
-    @Bind(R.id.song_play_iv) PlayOrPauseImageButton mBottomSongPlayOrPauseBtn;
-    @Bind(R.id.song_next_iv) ImageButton mBottomSongNextBtn;
-    @Bind(R.id.mini_player_ll) View mBottomMusicMiniLayout;
+    @Bind(R.id.collapsing_player_content_ft) View mBottomMusicMiniLayout;
 
     private SongsAdapter mAdapter;
     private LinearLayoutManager mLayoutMgr;
@@ -122,7 +115,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
                         mShuffleFab.setImageResource(R.drawable.ic_pause);
                     } else if(!mMusicService.isPlaying()) {
-                        mMusicService.play(mAlbumDto.songs, MusicConstants.PLAY_SHUFFLE);
+                        mMusicService.playList(mAlbumDto.songs, MusicConstants.PLAY_SHUFFLE);
 
                         mShuffleFab.setImageResource(R.drawable.ic_pause);
                     } else {
@@ -130,26 +123,6 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
                         mShuffleFab.setImageResource(R.drawable.ic_shuffle);
                     }
-                }
-            }break;
-
-            case R.id.song_play_iv: {
-                if(isServiceBind) {
-                    if(mMusicService.isPlaying() || mMusicService.isPrepare()) {
-                        mMusicService.pause();
-
-                        mBottomSongPlayOrPauseBtn.toggle(false);
-                    } else {
-                        mMusicService.resume();
-
-                        mBottomSongPlayOrPauseBtn.toggle(true);
-                    }
-                }
-            }break;
-
-            case R.id.song_next_iv: {
-                if(isServiceBind) {
-                    mMusicService.next();
                 }
             }break;
         }
@@ -176,8 +149,6 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
         }
 
         mShuffleFab.setOnClickListener(this);
-        mBottomSongPlayOrPauseBtn.setOnClickListener(this);
-        mBottomSongNextBtn.setOnClickListener(this);
 
         mLayoutMgr = new LinearLayoutManager(this);
         mSongsRv.setLayoutManager(mLayoutMgr);
@@ -194,7 +165,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                     if (mMusicService.isPlaying() || mMusicService.isPause())
                         mMusicService.playItem(position);
                     else
-                        mMusicService.play(mAlbumDto.songs);
+                        mMusicService.playList(mAlbumDto.songs);
                 }
             }
         });
@@ -207,13 +178,17 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                 mBottomMusicMiniLayout.setAlpha(1f - slideOffset);
             }
         });
-        updateBottomUIWithSong(mAlbumDto.songs.get(0), false);
-        Fragment playFt = new PlaybackFragment();
         Bundle argument = new Bundle();
-        argument.putParcelable(PlaybackFragment.EXTRA_SONG, mAlbumDto.songs.get(0));
+        argument.putParcelable(MusicConstants.EXTRA_SONG, mAlbumDto.songs.get(0));
+        Fragment playFt = new PlaybackFragment();
         playFt.setArguments(argument);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.expanded_player_content_ft, playFt, PlaybackFragment.TAG)
+                .commitAllowingStateLoss();
+        Fragment miniFt = new MiniPlayerFragment();
+        miniFt.setArguments(argument);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.collapsing_player_content_ft, miniFt, MiniPlayerFragment.TAG)
                 .commitAllowingStateLoss();
     }
 
@@ -222,29 +197,12 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
+    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
         if(Utils.checkNull(mCurrentSong)
-                || !event.currentSong.getUrl().equals(mCurrentSong.getUrl())) {
-            mCurrentSong = event.currentSong;
-            mAdapter.highlightItem(mAdapter.findPositionByUrl(event.currentSong.getUrl()));
-
-            updateBottomUIWithSong(mCurrentSong, true);
+                || !event.song.getUrl().equals(mCurrentSong.getUrl())) {
+            mCurrentSong = event.song;
+            mAdapter.highlightItem(mAdapter.findPositionByUrl(event.song.getUrl()));
         }
-    }
-
-    private void updateBottomUIWithSong(@NonNull ISong song, boolean isPlaying) {
-        mBottomSongNameTv.setText(song.getName());
-        mBottomSongArtistTv.setText(song.getArtist());
-        if(!TextUtils.isEmpty(song.getCover()))
-            Picasso.with(this)
-                    .load(new File(song.getCover()))
-                    .fit()
-                    .error(R.drawable.place_holder)
-                    .into(mBottomSongCoverIv);
-        else
-            mBottomSongCoverIv.setImageResource(R.drawable.place_holder);
-
-        mBottomSongPlayOrPauseBtn.toggle(isPlaying);
     }
 
 }

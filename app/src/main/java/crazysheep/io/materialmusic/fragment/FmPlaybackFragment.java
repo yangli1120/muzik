@@ -186,9 +186,9 @@ public class FmPlaybackFragment extends BaseFragment implements View.OnClickList
 
     // event bus message receiver
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
-        if(mCurSong.sid != ((SongDto)event.currentSong).sid) {
-            mCurSong = (SongDto)event.currentSong;
+    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+        if(mCurSong.sid != ((SongDto)event.song).sid) {
+            mCurSong = (SongDto)event.song;
             updateCurrentSongUI();
             mMusicSb.setMax(mCurSong.length);
         }

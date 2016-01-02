@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import crazysheep.io.materialmusic.R;
 
 /**
- * ImageButton switch play or pause state of music
+ * ImageButton switch playList or pause state of music
  *
  * Created by crazysheep on 16/1/2.
  */

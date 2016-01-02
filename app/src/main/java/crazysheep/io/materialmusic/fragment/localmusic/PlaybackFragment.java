@@ -19,6 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.bean.ISong;
+import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.utils.Utils;
@@ -37,8 +38,6 @@ public class PlaybackFragment extends BaseFragment {
     @Bind(R.id.song_next_ib) ImageButton mNextBtn;
     @Bind(R.id.song_play_or_pause_ib) PlayOrPauseImageButton mPlayOrPauseBtn;
 
-    public static final String EXTRA_SONG = "extra_song";
-
     private ISong mCurSong;
 
     @Nullable
@@ -48,7 +47,7 @@ public class PlaybackFragment extends BaseFragment {
                 container, false);
         ButterKnife.bind(this, contentView);
 
-        mCurSong = getArguments().getParcelable(EXTRA_SONG);
+        mCurSong = getArguments().getParcelable(MusicConstants.EXTRA_SONG);
 
         updateUI();
 
@@ -80,9 +79,9 @@ public class PlaybackFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
-        if(Utils.checkNull(mCurSong) || !event.currentSong.getUrl().equals(mCurSong.getUrl())) {
-            mCurSong = event.currentSong;
+    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+        if(Utils.checkNull(mCurSong) || !event.song.getUrl().equals(mCurSong.getUrl())) {
+            mCurSong = event.song;
             updateUI();
         }
     }

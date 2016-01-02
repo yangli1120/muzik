@@ -7,10 +7,11 @@ import android.support.annotation.NonNull;
 
 import java.io.IOException;
 
+import crazysheep.io.materialmusic.bean.ISong;
 import de.greenrobot.event.EventBus;
 
 /**
- * play music
+ * playList music
  *
  * Created by crazysheep on 15/12/21.
  */
@@ -18,7 +19,48 @@ public class MusicPlayer {
 
     /////////////////////// event bus /////////////////////////////////
 
-    public static class EventSongPlayDone {
+    /**
+     * send by {@link MusicPlayer} when current song play complete, not stop by user
+     * */
+    public static class EventMusicPlayDone {
+        public ISong song;
+
+        public EventMusicPlayDone(@NonNull ISong song) {
+            this.song = song;
+        }
+    }
+
+    /**
+     * send by {@link MusicPlayer} when music is pause
+     */
+    public static class EventMusicPause {
+        public ISong song;
+
+        public EventMusicPause(@NonNull ISong song) {
+            this.song = song;
+        }
+    }
+
+    /**
+     * send by {@link MusicPlayer} when music is resume
+     * */
+    public static class EventMusicResume {
+        public ISong song;
+
+        public EventMusicResume(@NonNull ISong song) {
+            this.song = song;
+        }
+    }
+
+    /**
+     * send by {@link MusicPlayer} when music is stop
+     * */
+    public static class EventMusicStop {
+        public ISong song;
+
+        public EventMusicStop(@NonNull ISong song) {
+            this.song = song;
+        }
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -44,7 +86,7 @@ public class MusicPlayer {
     private static final int STATE_STOP = 4;
     private int mCurState = STATE_IDLE;
 
-    private String mUrl;
+    private ISong mSong;
 
     private MediaPlayer mPlayer;
     private boolean isVolumeOn = true;
@@ -57,20 +99,20 @@ public class MusicPlayer {
         return mPlayer;
     }
 
-    public void play(@NonNull String url) {
+    public void play(@NonNull ISong song) {
         if(isPlaying() || isPause() || isPreparing())
             getPlayer().reset();
 
         mCurState = STATE_PREPARING;
-        mUrl = url;
+        mSong = song;
 
         try {
-            getPlayer().setDataSource(mContext, Uri.parse(url));
+            getPlayer().setDataSource(mContext, Uri.parse(mSong.getUrl()));
             getPlayer().prepareAsync();
             getPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
-                    start();
+                    resume();
                 }
             });
             getPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -78,8 +120,8 @@ public class MusicPlayer {
                 public void onCompletion(MediaPlayer mp) {
                     stop();
 
-                    // notify current song play done
-                    EventBus.getDefault().post(new EventSongPlayDone());
+                    // notify current song playList done
+                    EventBus.getDefault().post(new EventMusicPlayDone(mSong));
                 }
             });
         } catch (IOException e) {
@@ -93,12 +135,16 @@ public class MusicPlayer {
         mCurState = STATE_PAUSE;
 
         getPlayer().pause();
+
+        EventBus.getDefault().post(new EventMusicPause(mSong));
     }
 
     public void resume() {
         mCurState = STATE_PLAY;
 
         getPlayer().start();
+
+        EventBus.getDefault().post(new EventMusicResume(mSong));
     }
 
     public void stop() {
@@ -106,16 +152,12 @@ public class MusicPlayer {
 
         getPlayer().stop();
         getPlayer().reset();
-    }
 
-    private void start() {
-        mCurState = STATE_PLAY;
-
-        getPlayer().start();
+        EventBus.getDefault().post(new EventMusicStop(mSong));
     }
 
     public void release() {
-        mUrl = null;
+        mSong = null;
 
         if(isPlaying() || isPause())
             stop();
@@ -166,7 +208,7 @@ public class MusicPlayer {
     }
 
     public boolean isCurrentUrl(@NonNull String url) {
-        return mUrl.equalsIgnoreCase(url);
+        return mSong.getUrl().equalsIgnoreCase(url);
     }
 
     public int getProgress() {

@@ -80,7 +80,7 @@ public class SongsFragment extends BaseFragment {
                     if(mService.isPlaying() || mService.isPause()) {
                         mService.playItem(position);
                     } else {
-                        mService.play(mAdapter.getData());
+                        mService.playList(mAdapter.getData());
                     }
                 }
             }
@@ -125,13 +125,13 @@ public class SongsFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventCurrentSong event) {
-        L.d("current song: " + mCurrentSong + ", event song: " + event.currentSong);
+    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+        L.d("current song: " + mCurrentSong + ", event song: " + event.song);
 
         if(Utils.checkNull(mCurrentSong)
-                || !event.currentSong.getUrl().equals(mCurrentSong.getUrl())) {
-            mCurrentSong = event.currentSong;
-            mAdapter.highlightItem(mAdapter.findPositionByUrl(event.currentSong.getUrl()));
+                || !event.song.getUrl().equals(mCurrentSong.getUrl())) {
+            mCurrentSong = event.song;
+            mAdapter.highlightItem(mAdapter.findPositionByUrl(event.song.getUrl()));
         }
     }
 

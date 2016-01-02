@@ -100,69 +100,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/playback_orange"/>
-            <LinearLayout
-                android:id="@+id/mini_player_ll"
+            <FrameLayout
+                android:id="@+id/collapsing_player_content_ft"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_collapsing_sliding_up_panel"
-                android:orientation="horizontal"
-                android:layout_gravity="top"
-                android:gravity="center_vertical"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@android:color/white">
-
-                <ImageView
-                    android:id="@+id/song_cover_iv"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:adjustViewBounds="true"
-                    android:layout_gravity="center_vertical"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="3"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp">
-
-                    <TextView
-                        android:id="@+id/song_name_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/MyTextTheme"
-                        android:textSize="@dimen/text_size_14"
-                        android:textColor="@color/text_grey_dark"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:ellipsize="end"/>
-                    <TextView
-                        android:id="@+id/song_artist_tv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        style="@style/MyTextTheme"
-                        android:textSize="@dimen/text_size_11"
-                        android:textColor="@color/text_grey_light"
-                        android:singleLine="true"
-                        android:maxLines="1"
-                        android:ellipsize="end"/>
-                </LinearLayout>
-                <crazysheep.io.materialmusic.widget.PlayOrPauseImageButton
-                    android:id="@+id/song_play_iv"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:background="?selectableItemBackground"
-                    android:src="@drawable/ic_play_circle_outline"/>
-                <ImageButton
-                    android:id="@+id/song_next_iv"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:background="?selectableItemBackground"
-                    android:src="@drawable/ic_skip_next_grey"/>
-            </LinearLayout>
+                android:layout_height="@dimen/height_collapsing_sliding_up_panel"/>
         </FrameLayout>
 
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>

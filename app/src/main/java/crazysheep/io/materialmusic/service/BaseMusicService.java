@@ -25,15 +25,15 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
 
     /////////////////// event bus /////////////////////////
 
-    public static class EventCurrentSong {
-        public ISong currentSong;
+    public static class EventSongProgress {
+        public ISong song;
         /**
          * seconds
          * */
         public int progress;
 
-        public EventCurrentSong(@NonNull ISong songDto, int progress) {
-            currentSong = songDto;
+        public EventSongProgress(@NonNull ISong songDto, int progress) {
+            song = songDto;
             this.progress = progress;
         }
     }
@@ -65,7 +65,7 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
                 case MSG_TIK_TOK: {
                     if(!Utils.checkNull(mReference.get())) {
                         BaseMusicService service = (BaseMusicService )mReference.get();
-                        EventBus.getDefault().post(new EventCurrentSong(service.mCurrentSong,
+                        EventBus.getDefault().post(new EventSongProgress(service.mCurrentSong,
                                 service.getProgress() / 1000));
                     }
 
@@ -106,12 +106,12 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventSongPlayDone event) {
+    public void onEventMainThread(@NonNull MusicPlayer.EventMusicPlayDone event) {
         playDone();
     }
 
     /**
-     * current song play done
+     * current song playList done
      * */
     protected void playDone() {
     }
@@ -119,7 +119,7 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     //////////////// event action //////////////////////////////
 
     protected void broadcastCurrentSong() {
-        EventBus.getDefault().post(new EventCurrentSong(mCurrentSong, getProgress() / 1000));
+        EventBus.getDefault().post(new EventSongProgress(mCurrentSong, getProgress() / 1000));
     }
 
     private void toggleTikTokEvent(boolean play) {
@@ -140,7 +140,7 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     }
 
     /**
-     * if force is true, init to play even the song is same one.
+     * if force is true, init to playList even the song is same one.
      * */
     public void play(@NonNull SD song, boolean force) {
         mCurrentSong = song;
@@ -149,7 +149,7 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
                 && MusicPlayer.getInstance(this).isCurrentUrl(song.getUrl()))
             MusicPlayer.getInstance(this).resume();
         else
-            MusicPlayer.getInstance(this).play(song.getUrl());
+            MusicPlayer.getInstance(this).play(mCurrentSong);
 
         toggleTikTokEvent(true);
 

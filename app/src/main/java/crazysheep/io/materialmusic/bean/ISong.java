@@ -14,4 +14,5 @@ public interface ISong extends Parcelable {
     String getCover();
     String getArtist();
     boolean isLocal();
+
 }
