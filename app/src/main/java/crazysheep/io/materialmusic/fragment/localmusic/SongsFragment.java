@@ -43,7 +43,7 @@ public class SongsFragment extends BaseFragment {
     private LinearLayoutManager mLayoutMgr;
     private SongsAdapter mAdapter;
 
-    private Subscription mSubsription;
+    private Subscription mSubscription;
 
     private ISong mCurrentSong;
     private boolean isBindService = false;
@@ -103,15 +103,15 @@ public class SongsFragment extends BaseFragment {
     public void onStop() {
         super.onStop();
 
-        if(!Utils.checkNull(mSubsription) && mSubsription.isUnsubscribed())
-            mSubsription.unsubscribe();
+        if(!Utils.checkNull(mSubscription) && mSubscription.isUnsubscribed())
+            mSubscription.unsubscribe();
         EventBus.getDefault().unregister(this);
         if(isBindService)
             getActivity().unbindService(mConnection);
     }
 
     private void querySongs() {
-        mSubsription = RxDB.getAllSongs(getActivity().getContentResolver(),
+        mSubscription = RxDB.getAllSongs(getActivity().getContentResolver(),
                 new RxDB.OnQueryListener<LocalSongDto>() {
                     @Override
                     public void onResult(List<LocalSongDto> results) {

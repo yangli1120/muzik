@@ -73,10 +73,10 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/shuffle_fab"
+                android:id="@+id/edit_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_shuffle"
+                android:src="@drawable/ic_mode_edit"
                 android:layout_margin="@dimen/fab_margin"
                 android:clickable="true"
                 app:fabSize="normal"

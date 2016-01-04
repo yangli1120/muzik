@@ -63,6 +63,7 @@ public class PlaylistFragment extends BaseFragment {
         LocalAlbumDto albumDto = new LocalAlbumDto();
         albumDto.songs = MediaStoreHelper.getAllSongs(getActivity().getContentResolver());
         albumDto.album_name = getString(R.string.tv_default_playlist_name);
+        albumDto.is_editable = false; // all songs playlist can not been editable
 
         List<LocalAlbumDto> albums = new ArrayList<>();
         albums.add(albumDto);

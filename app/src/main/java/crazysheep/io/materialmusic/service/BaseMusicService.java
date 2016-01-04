@@ -202,6 +202,10 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
         return MusicPlayer.getInstance(this).isPause();
     }
 
+    public boolean isIdle() {
+        return MusicPlayer.getInstance(this).isIdle();
+    }
+
     public void notifyPlaying() {
         // TODO show ongoing notification to avoid service be killed
     }

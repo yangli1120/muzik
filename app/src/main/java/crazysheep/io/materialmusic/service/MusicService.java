@@ -184,6 +184,10 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
         calculateAndPlayNextSong(true);
     }
 
+    public void previous() {
+        calculateAndPlayPreviousSong();
+    }
+
     private void calculateAndPlayNextSong(boolean isUserAction) {
         if(!isUserAction && mCurPlayType == MusicConstants.PLAY_ORDER
                 && mCurPlayPos == mPlaylist.size() - 1) {
@@ -208,8 +212,9 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
     /**
      * get current song of MusicService
      * */
-    public @NonNull ISong getCurrentSong() {
-        return mPlaylist.get(mCurPlayPos);
+    public ISong getCurrentSong() {
+        return Utils.checkNull(mPlaylist) || mCurPlayPos == INVALID_POSITION
+                ? null :mPlaylist.get(mCurPlayPos);
     }
 
     /**

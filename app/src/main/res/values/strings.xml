@@ -18,8 +18,8 @@
 
     <string name="tv_local_music_title">Local Music</string>
     <string name="tv_default_playlist_name">all songs</string>
-    <string name="tv_my_playlist">my playlists</string>
-    <string name="tv_artists">artists</string>
-    <string name="tv_albums">albums</string>
-    <string name="tv_songs">songs</string>
+    <string name="tv_my_playlist">playlist</string>
+    <string name="tv_artists">artist</string>
+    <string name="tv_albums">album</string>
+    <string name="tv_songs">song</string>
 </resources>

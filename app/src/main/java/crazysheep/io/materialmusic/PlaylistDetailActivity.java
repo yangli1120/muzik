@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,12 +52,11 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.data_rv) RecyclerView mSongsRv;
     @Bind(R.id.parallax_header_iv) ImageView mParallaxHeaderIv;
-    @Bind(R.id.shuffle_fab) FloatingActionButton mShuffleFab;
+    @Bind(R.id.edit_fab) FloatingActionButton mEditFab;
     @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPl;
     @Bind(R.id.collapsing_player_content_ft) View mBottomMusicMiniLayout;
 
     private SongsAdapter mAdapter;
-    private LinearLayoutManager mLayoutMgr;
 
     private LocalAlbumDto mAlbumDto;
 
@@ -108,22 +108,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.shuffle_fab: {
-                if(isServiceBind) {
-                    if(mMusicService.isPause()) {
-                        mMusicService.resume();
-
-                        mShuffleFab.setImageResource(R.drawable.ic_pause);
-                    } else if(!mMusicService.isPlaying()) {
-                        mMusicService.playList(mAlbumDto.songs, MusicConstants.PLAY_SHUFFLE);
-
-                        mShuffleFab.setImageResource(R.drawable.ic_pause);
-                    } else {
-                        mMusicService.pause();
-
-                        mShuffleFab.setImageResource(R.drawable.ic_shuffle);
-                    }
-                }
+            case R.id.edit_fab: {
+                // TODO modify playlist
             }break;
         }
     }
@@ -148,10 +134,9 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             getSupportActionBar().setHomeButtonEnabled(true);
         }
 
-        mShuffleFab.setOnClickListener(this);
+        mEditFab.setOnClickListener(this);
 
-        mLayoutMgr = new LinearLayoutManager(this);
-        mSongsRv.setLayoutManager(mLayoutMgr);
+        mSongsRv.setLayoutManager(new LinearLayoutManager(this));
 
         if(!TextUtils.isEmpty(mAlbumDto.album_cover))
             Picasso.with(this)
@@ -170,6 +155,16 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             }
         });
         mSongsRv.setAdapter(mAdapter);
+
+        // if album is not editable, do not show fab
+        // see{@link http://stackoverflow.com/questions/31269958/floatingactionbutton-doesnt-hide}
+        if(!mAlbumDto.is_editable) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mEditFab
+                    .getLayoutParams();
+            params.setAnchorId(View.NO_ID);
+            mEditFab.setLayoutParams(params);
+            mEditFab.setVisibility(View.GONE);
+        }
 
         // sliding up layout, music info use first song by default
         mSlidingUpPl.setPanelSlideListener(new SimplePanelSlideListener() {

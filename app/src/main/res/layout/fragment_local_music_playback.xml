@@ -15,6 +15,51 @@
         android:adjustViewBounds="true"
         android:scaleType="centerCrop"/>
 
+    <LinearLayout
+        android:id="@+id/top_song_info_ll"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_collapsing_sliding_up_panel"
+        android:orientation="horizontal"
+        android:fitsSystemWindows="true"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:background="#ccffffff">
+
+        <ImageView
+            android:id="@+id/song_little_cover_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/place_holder"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <TextView
+                android:id="@+id/song_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_grey_dark"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:textSize="15sp"/>
+            <TextView
+                android:id="@+id/song_artist_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:textColor="@color/text_grey_light"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -24,7 +69,7 @@
         <org.adw.library.widgets.discreteseekbar.DiscreteSeekBar
             android:id="@+id/music_sb"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="5dp"
             android:layout_gravity="top"
             app:dsb_min="0"
             app:dsb_progressColor="@android:color/white"
@@ -62,19 +107,19 @@
                 android:layout_width="68dp"
                 android:layout_height="68dp"
                 android:src="@drawable/ic_skip_previous_black"
-                android:background="@android:color/transparent"/>
+                android:background="?selectableItemBackground"/>
             <crazysheep.io.materialmusic.widget.PlayOrPauseImageButton
                 android:id="@+id/song_play_or_pause_ib"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
                 android:src="@drawable/ic_play_circle_fill_black"
-                android:background="@android:color/transparent"/>
+                android:background="?selectableItemBackground"/>
             <ImageButton
                 android:id="@+id/song_next_ib"
                 android:layout_width="68dp"
                 android:layout_height="68dp"
                 android:src="@drawable/ic_skip_next_black"
-                android:background="@android:color/transparent"/>
+                android:background="?selectableItemBackground"/>
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>

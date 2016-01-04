@@ -58,6 +58,8 @@ public class LocalAlbumDto implements Parcelable {
     public String album_name;
     public String album_cover;
 
+    public boolean is_editable;
+
     @Override
     public int describeContents() {
         return 0;
