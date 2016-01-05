@@ -2,6 +2,8 @@ package crazysheep.io.materialmusic.application;
 
 import android.app.Application;
 
+import com.activeandroid.ActiveAndroid;
+import com.facebook.stetho.Stetho;
 import com.orhanobut.logger.Logger;
 
 /**
@@ -19,5 +21,16 @@ public class BaseApplication extends Application {
 
         Logger.init(TAG)
                 .methodCount(5);
+        // init activeandroid
+        ActiveAndroid.initialize(this);
+        // init stetho
+        Stetho.initializeWithDefaults(this);
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+
+        ActiveAndroid.dispose();
     }
 }

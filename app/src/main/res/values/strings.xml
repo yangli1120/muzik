@@ -22,4 +22,12 @@
     <string name="tv_artists">artist</string>
     <string name="tv_albums">album</string>
     <string name="tv_songs">song</string>
+
+    <string name="tv_choose_playlist">choose a playlist to add</string>
+    <string name="tv_create_a_new_playlist">create a new playlist</string>
+    <string name="hint_input_playlist_name">input a playlist name</string>
+
+    <!-- menu -->
+    <string name="menu_add_to_playlist">add to playlist</string>
+    <string name="menu_remove_from_playlist">remove</string>
 </resources>

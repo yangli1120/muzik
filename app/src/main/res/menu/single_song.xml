@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/menu_add_to_playlist"
+        android:title="@string/menu_add_to_playlist"
+        app:showAsAction="always"/>
+    <item android:id="@+id/menu_remove"
+        android:title="@string/menu_remove_from_playlist"
+        app:showAsAction="always" />
+</menu>

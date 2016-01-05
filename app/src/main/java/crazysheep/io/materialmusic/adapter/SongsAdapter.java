@@ -1,23 +1,33 @@
 package crazysheep.io.materialmusic.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.bean.PlaylistModel;
 import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
+import crazysheep.io.materialmusic.utils.DialogUtils;
+import crazysheep.io.materialmusic.utils.SongPopupMenuHelper;
 
 /**
  * songs adapter
@@ -38,7 +48,7 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
     }
 
     @Override
-    public void onBindViewHolder(SongHolder holder, int position) {
+    public void onBindViewHolder(final SongHolder holder, int position) {
         LocalSongDto item = getItem(position);
 
         Picasso.with(mContext)
@@ -59,6 +69,88 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
             holder.highlightV.setVisibility(View.VISIBLE);
         else
             holder.highlightV.setVisibility(View.INVISIBLE);
+
+        holder.editBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // show popup menu
+                showSongPopupMenu(holder, getItem(holder.getAdapterPosition()));
+            }
+        });
+    }
+
+    private void showSongPopupMenu(SongHolder holder, final LocalSongDto song) {
+        SongPopupMenuHelper.showMenu(mContext, holder.editBtn,
+                new SongPopupMenuHelper.FlagBuilder().noRemove().build(),
+                new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_add_to_playlist: {
+                                showPlaylistsDialog(song);
+
+                                return true;
+                            }
+                        }
+
+                        return false;
+                    }
+                });
+    }
+
+    private void showPlaylistsDialog(final LocalSongDto song) {
+        // first, query current playlist
+        List<PlaylistModel> playlists= new Select().from(PlaylistModel.class).execute();
+        final List<String> plNames = new ArrayList<>(playlists.size());
+        plNames.add(mContext.getString(R.string.tv_create_a_new_playlist));
+        for(PlaylistModel model : playlists)
+                plNames.add(model.playlist_name);
+        // second, show all playlists for choose
+        DialogUtils.showListDialog((Activity) mContext,
+                mContext.getString(R.string.tv_choose_playlist),
+                plNames,
+                new DialogUtils.SingleChoiceCallback() {
+                    @Override
+                    public void onItemClick(int position) {
+                        if (position == 0) {
+                            showCreatePlaylistDialog(song);
+                        } else {
+                            // TODO add song to playlist
+                            Toast.makeText(mContext, plNames.get(position), Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
+    private void showCreatePlaylistDialog(LocalSongDto song) {
+        DialogUtils.showEditDialog((Activity) mContext,
+                mContext.getString(R.string.tv_create_a_new_playlist),
+                mContext.getString(R.string.hint_input_playlist_name),
+                new DialogUtils.EditDoneCallback() {
+                    @Override
+                    public void onEditDone(String editableString) {
+                        // TODO create a new playlist, refresh list
+                        if(TextUtils.isEmpty(editableString)) {
+                            Toast.makeText(mContext, "playlist name can not been null",
+                                    Toast.LENGTH_SHORT).show();
+
+                            return;
+                        }
+
+                        List<PlaylistModel> results = new Select().from(PlaylistModel.class)
+                                .where("playlist_name = ?", editableString.trim())
+                                .execute();
+                        if(results.size() > 0) {
+                            Toast.makeText(mContext, "playlist already exist!", Toast.LENGTH_LONG)
+                                    .show();
+
+                            return;
+                        }
+
+                        new PlaylistModel(editableString.trim()).save();
+                    }
+                });
     }
 
     public void highlightItem(int position) {
@@ -84,6 +176,7 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
         @Bind(R.id.song_artist_tv) TextView artistTv;
         @Bind(R.id.song_name_tv) TextView nameTv;
         @Bind(R.id.highlight_v) View highlightV;
+        @Bind(R.id.song_edit_ib) ImageButton editBtn;
 
         public SongHolder(@NonNull View view) {
             super(view);
