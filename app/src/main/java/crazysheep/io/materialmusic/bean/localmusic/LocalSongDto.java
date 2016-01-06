@@ -37,6 +37,7 @@ public class LocalSongDto implements Parcelable, ISong {
     public static LocalSongDto createFromCursor(@NonNull Cursor cursor) {
         LocalSongDto song = new LocalSongDto();
 
+        song.id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns._ID));
         song.album_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM_ID));
         song.album_name = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ALBUM));
         song.artist_id = cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.AudioColumns.ARTIST_ID));
@@ -50,6 +51,7 @@ public class LocalSongDto implements Parcelable, ISong {
         return song;
     }
 
+    public long id;
     public String album_name;
     public long album_id;
     public String artist_name;

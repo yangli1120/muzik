@@ -63,7 +63,8 @@ public class AlbumsFragment extends BaseFragment {
     }
 
     private void queryAlbums() {
-        mSubscription = RxDB.getAllAlbums(getActivity().getContentResolver(),
+        // TODO
+        /*mSubscription = RxDB.getAllAlbums(getActivity().getContentResolver(),
                 new RxDB.OnQueryListener<LocalAlbumDto>() {
                     @Override
                     public void onResult(List<LocalAlbumDto> results) {
@@ -73,7 +74,7 @@ public class AlbumsFragment extends BaseFragment {
                     @Override
                     public void onError(String err) {
                     }
-                });
+                });*/
     }
 
 }

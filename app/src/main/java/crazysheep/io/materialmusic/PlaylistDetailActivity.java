@@ -142,7 +142,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             Picasso.with(this)
                     .load(new File(mAlbumDto.album_cover))
                     .into(mParallaxHeaderIv);
-        mAdapter = new SongsAdapter(this, mAlbumDto.songs);
+        mAdapter = new SongsAdapter(this, null);
         mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -150,7 +150,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                     if (mMusicService.isPlaying() || mMusicService.isPause())
                         mMusicService.playItem(position);
                     else
-                        mMusicService.playList(mAlbumDto.songs);
+                        ;// TODO mMusicService.playList(mAlbumDto.songs);
                 }
             }
         });

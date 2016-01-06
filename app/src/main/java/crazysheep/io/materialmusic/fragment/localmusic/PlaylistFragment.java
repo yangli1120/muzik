@@ -8,19 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import crazysheep.io.materialmusic.PlaylistDetailActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
-import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
-import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
-import crazysheep.io.materialmusic.db.MediaStoreHelper;
+import crazysheep.io.materialmusic.bean.PlaylistModel;
+import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
-import crazysheep.io.materialmusic.utils.ActivityUtils;
+import crazysheep.io.materialmusic.utils.Utils;
+import rx.Subscription;
 
 /**
  * fragment show local playlist
@@ -30,8 +28,9 @@ import crazysheep.io.materialmusic.utils.ActivityUtils;
 public class PlaylistFragment extends BaseFragment {
 
     @Bind(R.id.data_rv) RecyclerView mPlaylistRv;
-    private GridLayoutManager mLayoutMgr;
     private PlaylistAdapter mAdapter;
+
+    private Subscription mSubscription;
 
     @Nullable
     @Override
@@ -41,33 +40,34 @@ public class PlaylistFragment extends BaseFragment {
         ButterKnife.bind(this, contentView);
 
         mAdapter = new PlaylistAdapter(getActivity(), null);
-        mLayoutMgr = new GridLayoutManager(getActivity(), 2);
-        mPlaylistRv.setLayoutManager(mLayoutMgr);
+        mPlaylistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mPlaylistRv.setAdapter(mAdapter);
-        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                ActivityUtils.start(getActivity(),
-                        ActivityUtils.prepare(getActivity(), PlaylistDetailActivity.class)
-                                .putExtra(PlaylistDetailActivity.EXTRA_ALBUM,
-                                        mAdapter.getItem(position)));
-            }
-        });
+        // TODO item click
 
-        initDefaultPlaylist();
+        queryPlaylists();
 
         return contentView;
     }
 
-    private void initDefaultPlaylist() {
-        LocalAlbumDto albumDto = new LocalAlbumDto();
-        albumDto.songs = MediaStoreHelper.getAllSongs(getActivity().getContentResolver());
-        albumDto.album_name = getString(R.string.tv_default_playlist_name);
-        albumDto.is_editable = false; // all songs playlist can not been editable
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-        List<LocalAlbumDto> albums = new ArrayList<>();
-        albums.add(albumDto);
-        mAdapter.setData(albums);
+        if(isVisibleToUser && (Utils.checkNull(mSubscription) || mSubscription.isUnsubscribed()))
+            queryPlaylists();
+    }
+
+    private void queryPlaylists() {
+        mSubscription = RxDB.query(PlaylistModel.class, new RxDB.OnQueryListener<PlaylistModel>() {
+            @Override
+            public void onResult(List<PlaylistModel> results) {
+                mAdapter.setData(results);
+            }
+
+            @Override
+            public void onError(String err) {
+            }
+        });
     }
 
 }

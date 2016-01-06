@@ -15,10 +15,18 @@ import com.activeandroid.annotation.Table;
 public class PlaylistModel extends Model {
 
     public static final String PLAYLIST_NAME = "playlist_name";
+    public static final String PLAYLIST_COVER = "playlist_cover";
+    public static final String SONG_COUNT = "song_count";
     public static final String IS_LAST_PLAYED = "is_last_played";
 
     @Column(name = PLAYLIST_NAME, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String playlist_name;
+
+    @Column(name = PLAYLIST_COVER)
+    public String playlist_cover;
+
+    @Column(name = SONG_COUNT)
+    public int song_count;
 
     @Column(name = IS_LAST_PLAYED)
     public boolean is_last_played; // if this playlist is last played before user exit app
@@ -28,6 +36,7 @@ public class PlaylistModel extends Model {
     }
 
     public PlaylistModel(@NonNull String playlist_name) {
+        super();
         this.playlist_name = playlist_name;
     }
 

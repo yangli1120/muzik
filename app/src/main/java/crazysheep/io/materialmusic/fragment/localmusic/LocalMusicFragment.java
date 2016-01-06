@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.MainActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.MusicPagerAdapter;
+import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
@@ -55,6 +56,14 @@ public class LocalMusicFragment extends BaseFragment {
             mService = null;
         }
     };
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // query system media store, update table 'songs'
+        RxDB.queryAndUpdateSongs(getActivity().getContentResolver());
+    }
 
     @Nullable
     @Override

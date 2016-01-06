@@ -24,8 +24,10 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.bean.PlaylistModel;
-import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
+import crazysheep.io.materialmusic.bean.PlaylistSongModel;
+import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.utils.DialogUtils;
 import crazysheep.io.materialmusic.utils.SongPopupMenuHelper;
 
@@ -34,11 +36,11 @@ import crazysheep.io.materialmusic.utils.SongPopupMenuHelper;
  *
  * Created by crazysheep on 15/12/29.
  */
-public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolder, LocalSongDto> {
+public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolder, SongModel> {
 
     private int mHighlightPos = -1;
 
-    public SongsAdapter(@NonNull Context context, List<LocalSongDto> data) {
+    public SongsAdapter(@NonNull Context context, List<SongModel> data) {
         super(context, data);
     }
 
@@ -49,21 +51,21 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
 
     @Override
     public void onBindViewHolder(final SongHolder holder, int position) {
-        LocalSongDto item = getItem(position);
+        ISong item = getItem(position);
 
         Picasso.with(mContext)
                 .cancelRequest(holder.coverIv);
 
-        if(!TextUtils.isEmpty(item.album_cover))
+        if(!TextUtils.isEmpty(item.getCover()))
             Picasso.with(mContext)
-                    .load(new File(item.album_cover))
+                    .load(new File(item.getCover()))
                     .fit()
                     .centerCrop()
                     .into(holder.coverIv);
         else
             holder.coverIv.setImageResource(R.drawable.place_holder);
-        holder.artistTv.setText(item.artist_name);
-        holder.nameTv.setText(item.song_name);
+        holder.artistTv.setText(item.getArtist());
+        holder.nameTv.setText(item.getName());
 
         if(mHighlightPos == position)
             holder.highlightV.setVisibility(View.VISIBLE);
@@ -79,7 +81,7 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
         });
     }
 
-    private void showSongPopupMenu(SongHolder holder, final LocalSongDto song) {
+    private void showSongPopupMenu(SongHolder holder, final SongModel song) {
         SongPopupMenuHelper.showMenu(mContext, holder.editBtn,
                 new SongPopupMenuHelper.FlagBuilder().noRemove().build(),
                 new PopupMenu.OnMenuItemClickListener() {
@@ -98,14 +100,14 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                 });
     }
 
-    private void showPlaylistsDialog(final LocalSongDto song) {
-        // first, query current playlist
-        List<PlaylistModel> playlists= new Select().from(PlaylistModel.class).execute();
+    private void showPlaylistsDialog(final SongModel song) {
+        // query playlists
+        final List<PlaylistModel> playlists= new Select().from(PlaylistModel.class).execute();
         final List<String> plNames = new ArrayList<>(playlists.size());
         plNames.add(mContext.getString(R.string.tv_create_a_new_playlist));
         for(PlaylistModel model : playlists)
                 plNames.add(model.playlist_name);
-        // second, show all playlists for choose
+        // show all playlists
         DialogUtils.showListDialog((Activity) mContext,
                 mContext.getString(R.string.tv_choose_playlist),
                 plNames,
@@ -115,40 +117,46 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                         if (position == 0) {
                             showCreatePlaylistDialog(song);
                         } else {
-                            // TODO add song to playlist
-                            Toast.makeText(mContext, plNames.get(position), Toast.LENGTH_SHORT)
-                                    .show();
+                            PlaylistModel playlist = playlists.get(position - 1);
+                            PlaylistSongModel playlistSongModel = new PlaylistSongModel(
+                                    playlist.getId(), song.songId);
+                            playlistSongModel.save();
                         }
                     }
                 });
     }
 
-    private void showCreatePlaylistDialog(LocalSongDto song) {
+    private void showCreatePlaylistDialog(final SongModel song) {
         DialogUtils.showEditDialog((Activity) mContext,
                 mContext.getString(R.string.tv_create_a_new_playlist),
                 mContext.getString(R.string.hint_input_playlist_name),
                 new DialogUtils.EditDoneCallback() {
                     @Override
                     public void onEditDone(String editableString) {
-                        // TODO create a new playlist, refresh list
                         if(TextUtils.isEmpty(editableString)) {
-                            Toast.makeText(mContext, "playlist name can not been null",
+                            Toast.makeText(mContext, R.string.toast_playlist_name_is_empty,
                                     Toast.LENGTH_SHORT).show();
 
                             return;
                         }
 
                         List<PlaylistModel> results = new Select().from(PlaylistModel.class)
-                                .where("playlist_name = ?", editableString.trim())
+                                .where(PlaylistModel.PLAYLIST_NAME + "= ?", editableString.trim())
                                 .execute();
                         if(results.size() > 0) {
-                            Toast.makeText(mContext, "playlist already exist!", Toast.LENGTH_LONG)
-                                    .show();
+                            Toast.makeText(mContext, R.string.toast_playlist_already_exist,
+                                    Toast.LENGTH_LONG).show();
 
                             return;
                         }
 
                         new PlaylistModel(editableString.trim()).save();
+                        List<PlaylistModel> playlistModels = new Select().from(PlaylistModel.class)
+                                .where(PlaylistModel.PLAYLIST_NAME + "= ?", editableString.trim())
+                                .execute();
+                        PlaylistSongModel playlistSongModel = new PlaylistSongModel(
+                                playlistModels.get(0).getId(), song.songId);
+                        playlistSongModel.save();
                     }
                 });
     }

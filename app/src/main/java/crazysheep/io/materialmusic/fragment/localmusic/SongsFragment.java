@@ -22,12 +22,11 @@ import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.adapter.SongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
-import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
+import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
-import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 import de.greenrobot.event.EventBus;
 import rx.Subscription;
@@ -40,7 +39,6 @@ import rx.Subscription;
 public class SongsFragment extends BaseFragment {
 
     @Bind(R.id.data_rv) RecyclerView mSongsRv;
-    private LinearLayoutManager mLayoutMgr;
     private SongsAdapter mAdapter;
 
     private Subscription mSubscription;
@@ -63,28 +61,31 @@ public class SongsFragment extends BaseFragment {
     };
 
     @Nullable
+    @SuppressWarnings("unchecked")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_songs, container, false);
         ButterKnife.bind(this, contentView);
 
-        mLayoutMgr = new LinearLayoutManager(getActivity());
         mAdapter = new SongsAdapter(getActivity(), null);
-        mSongsRv.setLayoutManager(mLayoutMgr);
+        mSongsRv.setLayoutManager(new LinearLayoutManager(getActivity()));
         mSongsRv.setAdapter(mAdapter);
         mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                if(isBindService) {
-                    if(mService.isPlaying() || mService.isPause()) {
+                if (isBindService) {
+                    if (mService.isPlaying() || mService.isPause()) {
                         mService.playItem(position);
                     } else {
-                        mService.playList(mAdapter.getData());
+                        //mService.playList(mAdapter.getData());
+                        // TODO play playlist
                     }
                 }
             }
         });
+
+        querySongs();
 
         return contentView;
     }
@@ -93,7 +94,6 @@ public class SongsFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
 
-        querySongs();
         EventBus.getDefault().register(this);
         getActivity().bindService(new Intent(getActivity(), MusicService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
@@ -110,24 +110,30 @@ public class SongsFragment extends BaseFragment {
             getActivity().unbindService(mConnection);
     }
 
-    private void querySongs() {
-        mSubscription = RxDB.getAllSongs(getActivity().getContentResolver(),
-                new RxDB.OnQueryListener<LocalSongDto>() {
-                    @Override
-                    public void onResult(List<LocalSongDto> results) {
-                        mAdapter.setData(results);
-                    }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
 
-                    @Override
-                    public void onError(String err) {
-                    }
-                });
+        if(isVisibleToUser && (mSubscription == null || mSubscription.isUnsubscribed()))
+            querySongs();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void querySongs() {
+        mSubscription = RxDB.query(SongModel.class, new RxDB.OnQueryListener<SongModel>() {
+            @Override
+            public void onResult(List<SongModel> results) {
+                mAdapter.setData(results);
+            }
+
+            @Override
+            public void onError(String err) {
+            }
+        });
     }
 
     @SuppressWarnings("unused")
     public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
-        L.d("current song: " + mCurrentSong + ", event song: " + event.song);
-
         if(Utils.checkNull(mCurrentSong)
                 || !event.song.getUrl().equals(mCurrentSong.getUrl())) {
             mCurrentSong = event.song;

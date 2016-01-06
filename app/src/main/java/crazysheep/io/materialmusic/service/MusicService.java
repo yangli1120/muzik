@@ -13,9 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import crazysheep.io.materialmusic.bean.ISong;
-import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
 import crazysheep.io.materialmusic.constants.MusicConstants;
-import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.utils.Utils;
 
 /**
@@ -23,7 +21,7 @@ import crazysheep.io.materialmusic.utils.Utils;
  *
  * Created by crazysheep on 15/12/30.
  */
-public class MusicService extends BaseMusicService<LocalSongDto> {
+public class MusicService extends BaseMusicService<ISong> {
 
     /////////////////// broadcast from notification //////////////////
 
@@ -67,8 +65,8 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
 
     private MusicBinder mBinder = new MusicBinder();
 
-    private List<LocalSongDto> mAllSongs; // keep original songs
-    private LinkedList<LocalSongDto> mPlaylist; // current playlist
+    private List<ISong> mAllSongs; // keep original songs
+    private LinkedList<ISong> mPlaylist; // current playlist
 
     @Nullable
     @Override
@@ -87,24 +85,6 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
         filter.addAction(MusicConstants.ACTION_PLAY);
         filter.addAction(MusicConstants.ACTION_PAUSE);
         registerReceiver(mReceiver, filter);
-
-        // init default playlist - all songs on external storage by default
-        RxDB.getAllSongs(getContentResolver(), new RxDB.OnQueryListener<LocalSongDto>() {
-            @Override
-            public void onResult(List<LocalSongDto> results) {
-                mAllSongs = results;
-                mCurPlayType = MusicConstants.PLAY_LOOP_ALL;
-                makePlaylist();
-
-                // pointer point at first song of playlist
-                mCurPlayPos = 0;
-            }
-
-            @Override
-            public void onError(String err) {
-                // I don't want a error!
-            }
-        });
     }
 
     @Override
@@ -121,7 +101,7 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
     private final static int INVALID_POSITION = -1;
     private int mCurPlayPos = INVALID_POSITION; // range is 0 ~ mPlaylist.size() - 1, or invalid
 
-    public void playList(@NonNull List<LocalSongDto> songs, int type) {
+    public void playList(@NonNull List<ISong> songs, int type) {
         mAllSongs = songs;
         mCurPlayType = type;
 
@@ -130,7 +110,7 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
     }
 
     private void makePlaylist() {
-        LocalSongDto curSong = null;
+        ISong curSong = null;
         if(mCurPlayPos >= 0)
             curSong = mPlaylist.get(mCurPlayPos);
 
@@ -156,7 +136,7 @@ public class MusicService extends BaseMusicService<LocalSongDto> {
         play(mPlaylist.get(position));
     }
 
-    public void playList(@NonNull List<LocalSongDto> songs) {
+    public void playList(@NonNull List<ISong> songs) {
         playList(songs, MusicConstants.PLAY_LOOP_ALL);
     }
 

@@ -27,6 +27,9 @@
     <string name="tv_create_a_new_playlist">create a new playlist</string>
     <string name="hint_input_playlist_name">input a playlist name</string>
 
+    <string name="toast_playlist_name_is_empty">playlist name can not been empty</string>
+    <string name="toast_playlist_already_exist">playlist is already exist!</string>
+
     <!-- menu -->
     <string name="menu_add_to_playlist">add to playlist</string>
     <string name="menu_remove_from_playlist">remove</string>

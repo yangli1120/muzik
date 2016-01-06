@@ -1,16 +1,20 @@
 package crazysheep.io.materialmusic.bean;
 
+import android.os.Parcel;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 
 /**
  * song model
  *
  * Created by crazysheep on 16/1/4.
  */
+@ParcelablePlease
 @Table(name = "songs")
-public class SongModel extends Model {
+public class SongModel extends Model implements ISong {
 
     public static final String NAME = "name";
     public static final String SONG_ID = "song_id";
@@ -21,8 +25,6 @@ public class SongModel extends Model {
     public static final String ALBUM = "album";
     public static final String ALBUM_ID = "album_id";
     public static final String IS_LOCAL = "is_local";
-    public static final String PLAYLIST_NAME = "playlist_name";
-    public static final String PLAYLIST_ID = "playlist_id";
 
     @Column(name = NAME)
     public String name;
@@ -51,10 +53,54 @@ public class SongModel extends Model {
     @Column(name = IS_LOCAL)
     public boolean isLocal;
 
-    @Column(name = PLAYLIST_NAME)
-    public String playlist;
+    public SongModel() {
+        super();
+    }
 
-    @Column(name = PLAYLIST_ID)
-    public long playlistId;
+    @Override
+    public String getName() {
+        return name;
+    }
 
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public String getCover() {
+        return cover;
+    }
+
+    @Override
+    public String getArtist() {
+        return artist;
+    }
+
+    @Override
+    public boolean isLocal() {
+        return isLocal;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        SongModelParcelablePlease.writeToParcel(this, dest, flags);
+    }
+
+    public static final Creator<SongModel> CREATOR = new Creator<SongModel>() {
+        public SongModel createFromParcel(Parcel source) {
+            SongModel target = new SongModel();
+            SongModelParcelablePlease.readFromParcel(target, source);
+            return target;
+        }
+
+        public SongModel[] newArray(int size) {
+            return new SongModel[size];
+        }
+    };
 }
