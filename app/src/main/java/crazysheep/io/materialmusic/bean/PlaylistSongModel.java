@@ -1,5 +1,7 @@
 package crazysheep.io.materialmusic.bean;
 
+import android.support.annotation.NonNull;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -12,30 +14,48 @@ import com.activeandroid.annotation.Table;
 @Table(name = "playlist_song")
 public class PlaylistSongModel extends Model {
 
+    ////////////////////////// easy make playlist_id_plus_song_id ///////////////////////////
+
+    public static String make(long playlist_id, long song_id) {
+        return String.valueOf(playlist_id) + "_" + String.valueOf(song_id);
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     public static final String TABLE_NAME = "playlist_song";
 
-    public static final String PLAYLIST_ID = "playlist_id";
-    public static final String SONG_ID = "song_id";
+    public static final String PLAYLIST = "playlist";
+    public static final String ADDED_AT = "added_at";
     public static final String PLAYLIST_ID_PLUS_SONG_ID = "playlist_id_plus_song_id";
+    public static final String SONG = "song";
 
-    @Column(name = PLAYLIST_ID)
-    public long playlist_id;
+    @Column(name = PLAYLIST)
+    public PlaylistModel playlist;
 
-    @Column(name = SONG_ID)
-    public long song_id;
+    @Column(name = ADDED_AT)
+    public long added_at;
 
     @Column(name = PLAYLIST_ID_PLUS_SONG_ID, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String playlist_id_plus_song_id;
+
+    @Column(name = SONG)
+    public SongModel song;
 
     public PlaylistSongModel() {
         super();
     }
 
-    public PlaylistSongModel(long playlist_id, long song_id) {
+    public PlaylistSongModel(@NonNull PlaylistModel playlist, @NonNull SongModel song,
+                             long added_at) {
         super();
-        this.playlist_id = playlist_id;
-        this.song_id = song_id;
-        this.playlist_id_plus_song_id = String.valueOf(playlist_id) + "_" + String.valueOf(song_id);
+        this.playlist = playlist;
+        this.song = song;
+        this.playlist_id_plus_song_id = make(playlist.getId(), song.songId);
+        this.added_at = added_at;
     }
 
+    @Override
+    public String toString() {
+        return playlist + "/" + song;
+    }
 }

@@ -1,8 +1,8 @@
 package crazysheep.io.materialmusic.bean;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
-import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
@@ -14,7 +14,7 @@ import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
  */
 @ParcelablePlease
 @Table(name = "songs")
-public class SongModel extends Model implements ISong {
+public class SongModel extends BaseModel implements ISong {
 
     public static final String NAME = "name";
     public static final String SONG_ID = "song_id";
@@ -103,4 +103,9 @@ public class SongModel extends Model implements ISong {
             return new SongModel[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

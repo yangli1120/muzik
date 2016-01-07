@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MaterialMusic</string>
+    <string name="app_name">Muzik</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -29,6 +29,7 @@
 
     <string name="toast_playlist_name_is_empty">playlist name can not been empty</string>
     <string name="toast_playlist_already_exist">playlist is already exist!</string>
+    <string name="toast_song_already_add_to_playlist">%s already add to playlist</string>
 
     <!-- menu -->
     <string name="menu_add_to_playlist">add to playlist</string>

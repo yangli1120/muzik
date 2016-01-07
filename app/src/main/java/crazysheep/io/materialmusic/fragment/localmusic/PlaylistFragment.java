@@ -12,11 +12,15 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.PlaylistDetailActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
+import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.bean.PlaylistModel;
+import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
+import crazysheep.io.materialmusic.utils.ActivityUtils;
 import crazysheep.io.materialmusic.utils.Utils;
 import rx.Subscription;
 
@@ -42,7 +46,14 @@ public class PlaylistFragment extends BaseFragment {
         mAdapter = new PlaylistAdapter(getActivity(), null);
         mPlaylistRv.setLayoutManager(new GridLayoutManager(getActivity(), 2));
         mPlaylistRv.setAdapter(mAdapter);
-        // TODO item click
+        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ActivityUtils.start(getActivity(),
+                        ActivityUtils.prepare(getActivity(), PlaylistDetailActivity.class)
+                                .putExtra(MusicConstants.EXTRA_PLAYLIST, mAdapter.getItem(position)));
+            }
+        });
 
         queryPlaylists();
 
@@ -58,16 +69,17 @@ public class PlaylistFragment extends BaseFragment {
     }
 
     private void queryPlaylists() {
-        mSubscription = RxDB.query(PlaylistModel.class, new RxDB.OnQueryListener<PlaylistModel>() {
-            @Override
-            public void onResult(List<PlaylistModel> results) {
-                mAdapter.setData(results);
-            }
+        mSubscription = RxDB.query(PlaylistModel.class, null, null, null,
+                new RxDB.OnQueryListener<PlaylistModel>() {
+                    @Override
+                    public void onResult(List<PlaylistModel> results) {
+                        mAdapter.setData(results);
+                    }
 
-            @Override
-            public void onError(String err) {
-            }
-        });
+                    @Override
+                    public void onError(String err) {
+                    }
+                });
     }
 
 }

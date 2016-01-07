@@ -26,5 +26,6 @@ public class MusicConstants extends Constants {
 
     public static final String EXTRA_SONG = "extra_song";
     public static final String EXTRA_ALBUM = "extra_album";
+    public static final String EXTRA_PLAYLIST = "extra_playlist";
 
 }

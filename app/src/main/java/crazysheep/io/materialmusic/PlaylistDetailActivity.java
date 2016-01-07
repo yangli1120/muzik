@@ -23,18 +23,24 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.adapter.SongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
-import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
+import crazysheep.io.materialmusic.bean.PlaylistModel;
+import crazysheep.io.materialmusic.bean.PlaylistSongModel;
+import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.constants.MusicConstants;
+import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.localmusic.MiniPlayerFragment;
 import crazysheep.io.materialmusic.fragment.localmusic.PlaybackFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
+import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 import crazysheep.io.materialmusic.widget.SimplePanelSlideListener;
 import de.greenrobot.event.EventBus;
@@ -46,8 +52,6 @@ import de.greenrobot.event.EventBus;
  */
 public class PlaylistDetailActivity extends BaseSwipeBackActivity implements View.OnClickListener {
 
-    public static final String EXTRA_ALBUM = "extra_album";
-
     @Bind(R.id.appbar) AppBarLayout mAppbar;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.data_rv) RecyclerView mSongsRv;
@@ -58,7 +62,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
     private SongsAdapter mAdapter;
 
-    private LocalAlbumDto mAlbumDto;
+    private PlaylistModel mPlaylistModel;
 
     private ISong mCurrentSong;
 
@@ -129,7 +133,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     private void initUI() {
         setSupportActionBar(mToolbar);
         if(!Utils.checkNull(getSupportActionBar())) {
-            getSupportActionBar().setTitle(mAlbumDto.album_name);
+            getSupportActionBar().setTitle(mPlaylistModel.playlist_name);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         }
@@ -138,9 +142,9 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
         mSongsRv.setLayoutManager(new LinearLayoutManager(this));
 
-        if(!TextUtils.isEmpty(mAlbumDto.album_cover))
+        if(!TextUtils.isEmpty(mPlaylistModel.playlist_cover))
             Picasso.with(this)
-                    .load(new File(mAlbumDto.album_cover))
+                    .load(new File(mPlaylistModel.playlist_cover))
                     .into(mParallaxHeaderIv);
         mAdapter = new SongsAdapter(this, null);
         mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
@@ -158,7 +162,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
 
         // if album is not editable, do not show fab
         // see{@link http://stackoverflow.com/questions/31269958/floatingactionbutton-doesnt-hide}
-        if(!mAlbumDto.is_editable) {
+        if(!mPlaylistModel.isEditable) {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)mEditFab
                     .getLayoutParams();
             params.setAnchorId(View.NO_ID);
@@ -173,22 +177,46 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                 mBottomMusicMiniLayout.setAlpha(1f - slideOffset);
             }
         });
-        Bundle argument = new Bundle();
-        argument.putParcelable(MusicConstants.EXTRA_SONG, mAlbumDto.songs.get(0));
-        Fragment playFt = new PlaybackFragment();
-        playFt.setArguments(argument);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.expanded_player_content_ft, playFt, PlaybackFragment.TAG)
-                .commitAllowingStateLoss();
-        Fragment miniFt = new MiniPlayerFragment();
-        miniFt.setArguments(argument);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.collapsing_player_content_ft, miniFt, MiniPlayerFragment.TAG)
-                .commitAllowingStateLoss();
     }
 
     private void parseIntent() {
-        mAlbumDto = getIntent().getParcelableExtra(EXTRA_ALBUM);
+        mPlaylistModel = getIntent().getParcelableExtra(MusicConstants.EXTRA_PLAYLIST);
+
+        // query table 'playlist_song', get songs of this playlist
+        RxDB.query(PlaylistSongModel.class,
+                PlaylistSongModel.PLAYLIST + "=?", String.valueOf(mPlaylistModel.getId()),
+                PlaylistSongModel.ADDED_AT + " DESC",
+                new RxDB.OnQueryListener<PlaylistSongModel>() {
+                    @Override
+                    public void onResult(List<PlaylistSongModel> results) {
+                        ArrayList<SongModel> songs = new ArrayList<>();
+                        for(PlaylistSongModel model : results)
+                            songs.add(model.song);
+
+                        mAdapter.setData(songs);
+
+                        // init bottom music control layout
+                        Bundle argument = new Bundle();
+                        argument.putParcelableArrayList(MusicConstants.EXTRA_PLAYLIST, songs);
+                        Fragment playFt = new PlaybackFragment();
+                        playFt.setArguments(argument);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.expanded_player_content_ft, playFt,
+                                        PlaybackFragment.TAG)
+                                .commitAllowingStateLoss();
+                        Fragment miniFt = new MiniPlayerFragment();
+                        miniFt.setArguments(argument);
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.collapsing_player_content_ft, miniFt,
+                                        MiniPlayerFragment.TAG)
+                                .commitAllowingStateLoss();
+                    }
+
+                    @Override
+                    public void onError(String err) {
+                        L.d(err);
+                    }
+                });
     }
 
     @SuppressWarnings("unused")

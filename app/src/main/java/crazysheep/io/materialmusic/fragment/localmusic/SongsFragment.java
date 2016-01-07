@@ -120,16 +120,17 @@ public class SongsFragment extends BaseFragment {
 
     @SuppressWarnings("unchecked")
     private void querySongs() {
-        mSubscription = RxDB.query(SongModel.class, new RxDB.OnQueryListener<SongModel>() {
-            @Override
-            public void onResult(List<SongModel> results) {
-                mAdapter.setData(results);
-            }
+        mSubscription = RxDB.query(SongModel.class, null, null, null,
+                new RxDB.OnQueryListener<SongModel>() {
+                    @Override
+                    public void onResult(List<SongModel> results) {
+                        mAdapter.setData(results);
+                    }
 
-            @Override
-            public void onError(String err) {
-            }
-        });
+                    @Override
+                    public void onError(String err) {
+                    }
+                });
     }
 
     @SuppressWarnings("unused")

@@ -118,9 +118,32 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                             showCreatePlaylistDialog(song);
                         } else {
                             PlaylistModel playlist = playlists.get(position - 1);
-                            PlaylistSongModel playlistSongModel = new PlaylistSongModel(
-                                    playlist.getId(), song.songId);
-                            playlistSongModel.save();
+
+                            // query if song is already add to target playlist
+                            List<PlaylistSongModel> songModels = new Select()
+                                    .from(PlaylistSongModel.class)
+                                    .where(PlaylistSongModel.PLAYLIST_ID_PLUS_SONG_ID + "=?",
+                                            PlaylistSongModel.make(playlist.getId(), song.songId))
+                                    .execute();
+                            if(songModels.size() > 0) {
+                                Toast.makeText(mContext,
+                                        mContext.getString(R.string.toast_song_already_add_to_playlist,
+                                                song.name),
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                PlaylistSongModel playlistSongModel = new PlaylistSongModel(
+                                        playlist, song, System.currentTimeMillis());
+                                playlistSongModel.save();
+
+                                // update playlist's cover to newest song
+                                List<PlaylistModel> playlistModels = new Select()
+                                        .from(PlaylistModel.class)
+                                        .where(PlaylistModel.PLAYLIST_NAME + "=?",
+                                                playlist.playlist_name)
+                                        .execute();
+                                playlistModels.get(0).playlist_cover = song.getCover();
+                                playlistModels.get(0).save();
+                            }
                         }
                     }
                 });
@@ -150,12 +173,16 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                             return;
                         }
 
-                        new PlaylistModel(editableString.trim()).save();
+                        PlaylistModel newPlaylist = new PlaylistModel(editableString.trim(),
+                                System.currentTimeMillis());
+                        newPlaylist.playlist_cover = song.getCover();
+                        newPlaylist.song_count = 1;
+                        newPlaylist.save();
                         List<PlaylistModel> playlistModels = new Select().from(PlaylistModel.class)
                                 .where(PlaylistModel.PLAYLIST_NAME + "= ?", editableString.trim())
                                 .execute();
                         PlaylistSongModel playlistSongModel = new PlaylistSongModel(
-                                playlistModels.get(0).getId(), song.songId);
+                                playlistModels.get(0), song, System.currentTimeMillis());
                         playlistSongModel.save();
                     }
                 });

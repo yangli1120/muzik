@@ -2,9 +2,11 @@ package crazysheep.io.materialmusic.db;
 
 import android.content.ContentResolver;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.activeandroid.ActiveAndroid;
 import com.activeandroid.Model;
+import com.activeandroid.query.From;
 import com.activeandroid.query.Select;
 
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
 import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
+import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 import rx.Observable;
 import rx.Subscriber;
@@ -187,13 +190,22 @@ public class RxDB {
      * query from table @param clazz, see{@link crazysheep.io.materialmusic.bean.PlaylistModel}
      * */
     public static <T extends Model> Subscription query(final Class<T> clazz,
+                                                       final String where, final String whereArgs,
+                                                       final String orderBy,
                                                        @NonNull final OnQueryListener<T> listener) {
         return Observable.just(true)
                 .subscribeOn(Schedulers.io())
                 .map(new Func1<Boolean, List<T>>() {
                     @Override
                     public List<T> call(Boolean aBoolean) {
-                        return new Select().from(clazz).execute();
+                        From from = new Select().all().from(clazz);
+                        if(!TextUtils.isEmpty(where) && !TextUtils.isEmpty(whereArgs))
+                            from.where(where, whereArgs);
+                        if(!TextUtils.isEmpty(orderBy))
+                            from.orderBy(orderBy);
+
+                        L.d("from: " + from.toSql());
+                        return from.execute();
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
