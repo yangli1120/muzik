@@ -16,7 +16,6 @@ import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
 import crazysheep.io.materialmusic.bean.localmusic.LocalSongDto;
-import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 import rx.Observable;
 import rx.Subscriber;
@@ -203,8 +202,6 @@ public class RxDB {
                             from.where(where, whereArgs);
                         if(!TextUtils.isEmpty(orderBy))
                             from.orderBy(orderBy);
-
-                        L.d("from: " + from.toSql());
                         return from.execute();
                     }
                 })

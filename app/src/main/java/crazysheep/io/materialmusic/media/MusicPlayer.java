@@ -218,4 +218,11 @@ public class MusicPlayer {
         return 0;
     }
 
+    public int getMaxProgress() {
+        if(isPause() || isPlaying())
+            return getPlayer().getDuration();
+
+        return 0;
+    }
+
 }

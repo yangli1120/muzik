@@ -1,31 +1,36 @@
 package crazysheep.io.materialmusic.fragment.localmusic;
 
-import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.anthonycr.grant.PermissionsManager;
-import com.anthonycr.grant.PermissionsResultAction;
+import com.activeandroid.query.Select;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.SimplePanelSlideListener;
+
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.MainActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.MusicPagerAdapter;
+import crazysheep.io.materialmusic.bean.PlaylistModel;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
+import crazysheep.io.materialmusic.prefs.PlaylistPrefs;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
 
@@ -39,7 +44,13 @@ public class LocalMusicFragment extends BaseFragment {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.content_vp) ViewPager mContentVp;
+    @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPanelLayout;
+    @Bind(R.id.sliding_up_layout) View mSlidingUpLayout;
+    @Bind(R.id.collapsing_player_content_ft) View mMiniPlayerLayout;
+
     private MusicPagerAdapter mMusicAdapter;
+
+    private PlaylistPrefs mPlaylistPrefs;
 
     private boolean isServiceBind = false;
     private MusicService mService;
@@ -48,6 +59,19 @@ public class LocalMusicFragment extends BaseFragment {
         public void onServiceConnected(ComponentName name, IBinder service) {
             isServiceBind = true;
             mService = ((MusicService.MusicBinder)service).getService();
+
+            // ready playlist
+            if(!TextUtils.isEmpty(mPlaylistPrefs.getLastPlaylist())) {
+                List<PlaylistModel> playlistModels = new Select()
+                        .from(PlaylistModel.class)
+                        .where(PlaylistModel.PLAYLIST_NAME + "=?", mPlaylistPrefs.getLastPlaylist())
+                        .execute();
+                if(playlistModels.size() == 1) {
+                    mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+                    mService.playList(playlistModels.get(0), mPlaylistPrefs.getLastPlayMode(),
+                            mPlaylistPrefs.getLastPlaySong(), false);
+                }
+            }
         }
 
         @Override
@@ -63,6 +87,8 @@ public class LocalMusicFragment extends BaseFragment {
 
         // query system media store, update table 'songs'
         RxDB.queryAndUpdateSongs(getActivity().getContentResolver());
+
+        mPlaylistPrefs = new PlaylistPrefs(getContext());
     }
 
     @Nullable
@@ -71,7 +97,6 @@ public class LocalMusicFragment extends BaseFragment {
         View contentView = inflater.inflate(R.layout.fragment_local_music, container, false);
         ButterKnife.bind(this, contentView);
 
-        requestStoragePermission();
         initUI();
 
         return contentView;
@@ -88,36 +113,21 @@ public class LocalMusicFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if(isServiceBind && !mService.isIdle())
+            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
         if(isServiceBind)
             getActivity().unbindService(mConnection);
-        // TODO if is not playing current, stop service
         if(mService.isIdle())
             getActivity().stopService(new Intent(getActivity(), MusicService.class));
-    }
-
-    private void requestStoragePermission() {
-        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(),
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                new PermissionsResultAction() {
-                    @Override
-                    public void onGranted() {
-                    }
-
-                    @Override
-                    public void onDenied(String permission) {
-                        getActivity().finish();
-                    }
-                });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
     }
 
     private void initUI() {
@@ -133,6 +143,24 @@ public class LocalMusicFragment extends BaseFragment {
         mContentVp.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
         mTabLayout.setupWithViewPager(mContentVp);
         mContentVp.setOffscreenPageLimit(mMusicAdapter.getCount());
+
+        mSlidingUpPanelLayout.setPanelSlideListener(new SimplePanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+                mMiniPlayerLayout.setAlpha(1 - slideOffset);
+            }
+        });
+
+        // init bottom layout
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.collapsing_player_content_ft, new MiniPlayerFragment(),
+                        MiniPlayerFragment.TAG)
+                .commitAllowingStateLoss();
+        // init playback layout
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.expanded_player_content_ft, new PlaybackFragment(),
+                        PlaybackFragment.TAG)
+                .commitAllowingStateLoss();
     }
 
 }

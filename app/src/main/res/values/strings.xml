@@ -31,6 +31,8 @@
     <string name="toast_playlist_already_exist">playlist is already exist!</string>
     <string name="toast_song_already_add_to_playlist">%s already add to playlist</string>
 
+    <string name="tv_playlist_song_count">playlist(%s)</string>
+
     <!-- menu -->
     <string name="menu_add_to_playlist">add to playlist</string>
     <string name="menu_remove_from_playlist">remove</string>

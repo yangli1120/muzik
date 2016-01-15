@@ -31,10 +31,12 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
          * seconds
          * */
         public int progress;
+        public int maxProgress;
 
-        public EventSongProgress(@NonNull ISong songDto, int progress) {
+        public EventSongProgress(@NonNull ISong songDto, int progress, int maxProgress) {
             song = songDto;
             this.progress = progress;
+            this.maxProgress = maxProgress;
         }
     }
 
@@ -66,7 +68,8 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
                     if(!Utils.checkNull(mReference.get())) {
                         BaseMusicService service = (BaseMusicService )mReference.get();
                         EventBus.getDefault().post(new EventSongProgress(service.mCurrentSong,
-                                service.getProgress() / 1000));
+                                Math.round(service.getProgress() * 1f / 1000),
+                                Math.round(service.getMaxProgress() * 1f / 1000)));
                     }
 
                     removeMessages(MSG_TIK_TOK);
@@ -119,7 +122,9 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     //////////////// event action //////////////////////////////
 
     protected void broadcastCurrentSong() {
-        EventBus.getDefault().post(new EventSongProgress(mCurrentSong, getProgress() / 1000));
+        EventBus.getDefault().post(new EventSongProgress(mCurrentSong,
+                Math.round(getProgress() * 1f / 1000),
+                Math.round(getMaxProgress() * 1f / 1000)));
     }
 
     private void toggleTikTokEvent(boolean play) {
@@ -133,6 +138,10 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
 
     public int getProgress() {
         return MusicPlayer.getInstance(this).getProgress();
+    }
+
+    public int getMaxProgress() {
+        return MusicPlayer.getInstance(this).getMaxProgress();
     }
 
     public void play(@NonNull SD song) {

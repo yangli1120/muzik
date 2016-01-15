@@ -41,35 +41,35 @@ public class BasePrefs {
         mSharedPrefs.edit().clear().apply();
     }
 
-    public String getString(String key, String defaultValue) {
+    protected String getString(String key, String defaultValue) {
         return mSharedPrefs.getString(key, defaultValue);
     }
 
-    public void setString(String key, String value) {
+    protected void setString(String key, String value) {
         mSharedPrefs.edit().putString(key, value).apply();
     }
 
-    public int getInt(String key, int defaultValue) {
+    protected int getInt(String key, int defaultValue) {
         return mSharedPrefs.getInt(key, defaultValue);
     }
 
-    public void setInt(String key, int value) {
+    protected void setInt(String key, int value) {
         mSharedPrefs.edit().putInt(key, value).apply();
     }
 
-    public boolean getBoolean(String key, boolean defaultValue) {
+    protected boolean getBoolean(String key, boolean defaultValue) {
         return mSharedPrefs.getBoolean(key, defaultValue);
     }
 
-    public void setBoolean(String key, boolean value) {
+    protected void setBoolean(String key, boolean value) {
         mSharedPrefs.edit().putBoolean(key, value).apply();
     }
 
-    public void setLong(String key, long value) {
+    protected void setLong(String key, long value) {
         mSharedPrefs.edit().putLong(key, value).apply();
     }
 
-    public long getLong(String key, long defaultValue) {
+    protected long getLong(String key, long defaultValue) {
         return mSharedPrefs.getLong(key, defaultValue);
     }
 

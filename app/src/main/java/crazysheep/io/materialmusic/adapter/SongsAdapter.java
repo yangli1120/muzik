@@ -131,8 +131,14 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                                                 song.name),
                                         Toast.LENGTH_LONG).show();
                             } else {
+                                // query how many songs already add to playlist, update index
+                                List<PlaylistSongModel> indexModels = new Select()
+                                        .from(PlaylistSongModel.class)
+                                        .where(PlaylistSongModel.PLAYLIST + "=?", playlist.getId())
+                                        .execute();
                                 PlaylistSongModel playlistSongModel = new PlaylistSongModel(
                                         playlist, song, System.currentTimeMillis());
+                                playlistSongModel.index_of_playlist = indexModels.size() + 1;
                                 playlistSongModel.save();
 
                                 // update playlist's cover to newest song
@@ -183,6 +189,8 @@ public class SongsAdapter extends RecyclerViewBaseAdapter<SongsAdapter.SongHolde
                                 .execute();
                         PlaylistSongModel playlistSongModel = new PlaylistSongModel(
                                 playlistModels.get(0), song, System.currentTimeMillis());
+                        playlistSongModel.index_of_playlist = 0; // first song of this playlist,
+                                                                 // index is 0
                         playlistSongModel.save();
                     }
                 });

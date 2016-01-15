@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -36,8 +35,6 @@ import crazysheep.io.materialmusic.bean.PlaylistSongModel;
 import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.db.RxDB;
-import crazysheep.io.materialmusic.fragment.localmusic.MiniPlayerFragment;
-import crazysheep.io.materialmusic.fragment.localmusic.PlaybackFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.L;
@@ -151,10 +148,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             @Override
             public void onItemClick(View view, int position) {
                 if (isServiceBind) {
-                    if (mMusicService.isPlaying() || mMusicService.isPause())
-                        mMusicService.playItem(position);
-                    else
-                        ;// TODO mMusicService.playList(mAlbumDto.songs);
+                    mMusicService.playList(mPlaylistModel, MusicConstants.PLAY_LOOP_ALL,
+                            mAdapter.getItem(position).songId, true);
                 }
             }
         });
@@ -185,7 +180,7 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
         // query table 'playlist_song', get songs of this playlist
         RxDB.query(PlaylistSongModel.class,
                 PlaylistSongModel.PLAYLIST + "=?", String.valueOf(mPlaylistModel.getId()),
-                PlaylistSongModel.ADDED_AT + " DESC",
+                PlaylistSongModel.INDEX_OF_PLAYLIST + " DESC",
                 new RxDB.OnQueryListener<PlaylistSongModel>() {
                     @Override
                     public void onResult(List<PlaylistSongModel> results) {
@@ -194,22 +189,6 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                             songs.add(model.song);
 
                         mAdapter.setData(songs);
-
-                        // init bottom music control layout
-                        Bundle argument = new Bundle();
-                        argument.putParcelableArrayList(MusicConstants.EXTRA_PLAYLIST, songs);
-                        Fragment playFt = new PlaybackFragment();
-                        playFt.setArguments(argument);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.expanded_player_content_ft, playFt,
-                                        PlaybackFragment.TAG)
-                                .commitAllowingStateLoss();
-                        Fragment miniFt = new MiniPlayerFragment();
-                        miniFt.setArguments(argument);
-                        getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.collapsing_player_content_ft, miniFt,
-                                        MiniPlayerFragment.TAG)
-                                .commitAllowingStateLoss();
                     }
 
                     @Override

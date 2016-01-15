@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_simple_song"
+    android:orientation="horizontal"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <TextView
+        android:id="@+id/song_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:singleLine="true"
+        android:maxLines="1"
+        style="@style/MyTextTheme"/>
+    <TextView
+        android:id="@+id/divide_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        style="@style/MyTextTheme"
+        android:text="  -  "
+        android:layout_toRightOf="@id/song_name_tv"
+        android:textColor="@color/text_grey_light"/>
+    <TextView
+        android:id="@+id/song_artist_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/divide_tv"
+        android:layout_centerVertical="true"
+        style="@style/MyTextTheme"
+        android:textSize="@dimen/text_size_10"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:textColor="@color/text_grey_light"/>
+</RelativeLayout>

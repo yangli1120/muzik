@@ -25,7 +25,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.bean.ISong;
-import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.media.MusicPlayer;
 import crazysheep.io.materialmusic.service.BaseMusicService;
@@ -73,7 +72,6 @@ public class MiniPlayerFragment extends BaseFragment {
         View contentView = inflater.inflate(R.layout.fragment_mini_player, container, false);
         ButterKnife.bind(this, contentView);
 
-        mCurSong = getArguments().getParcelable(MusicConstants.EXTRA_SONG);
         updateUI();
 
         return contentView;
@@ -87,6 +85,14 @@ public class MiniPlayerFragment extends BaseFragment {
 
         getActivity().bindService(new Intent(getActivity(), MusicService.class), mConnection,
                 Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(isServiceBind)
+            mPlayOrPauseBtn.toggle(mService.isPlaying());
     }
 
     @Override

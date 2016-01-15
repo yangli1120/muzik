@@ -8,12 +8,19 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import crazysheep.io.materialmusic.bean.ISong;
+import crazysheep.io.materialmusic.bean.PlaylistModel;
+import crazysheep.io.materialmusic.bean.PlaylistSongModel;
+import crazysheep.io.materialmusic.bean.SongModel;
 import crazysheep.io.materialmusic.constants.MusicConstants;
+import crazysheep.io.materialmusic.db.RxDB;
+import crazysheep.io.materialmusic.prefs.PlaylistPrefs;
+import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
 
 /**
@@ -65,6 +72,7 @@ public class MusicService extends BaseMusicService<ISong> {
 
     private MusicBinder mBinder = new MusicBinder();
 
+    private PlaylistModel mPlaylistModel;
     private List<ISong> mAllSongs; // keep original songs
     private LinkedList<ISong> mPlaylist; // current playlist
 
@@ -92,6 +100,13 @@ public class MusicService extends BaseMusicService<ISong> {
         super.onDestroy();
 
         unregisterReceiver(mReceiver);
+
+        // save last playlist model for next startup app
+        PlaylistPrefs prefs = new PlaylistPrefs(this);
+        prefs.setLastPlaylist(mPlaylistModel.playlist_name);
+        prefs.setLastPlayMode(mCurPlayType);
+        SongModel songModel = (SongModel) mPlaylist.get(mCurPlayPos);
+        prefs.setLastPlaySong(songModel.songId);
     }
 
     ////////////////////////// music operations //////////////////////
@@ -101,12 +116,42 @@ public class MusicService extends BaseMusicService<ISong> {
     private final static int INVALID_POSITION = -1;
     private int mCurPlayPos = INVALID_POSITION; // range is 0 ~ mPlaylist.size() - 1, or invalid
 
-    public void playList(@NonNull List<ISong> songs, int type) {
-        mAllSongs = songs;
-        mCurPlayType = type;
+    /**
+     * @param model The playlist model
+     * @param type The play type, see{@link MusicConstants}
+     * @param songId The song id of which should be played in current playlist
+     * @param autoPlay Play immediately or just ready to play
+     * */
+    public void playList(@NonNull PlaylistModel model, int type, final long songId,
+                         final boolean autoPlay) {
+        mPlaylistModel = model;
 
-        makePlaylist();
-        calculateAndPlayNextSong(false);
+        mCurPlayType = type;
+        RxDB.query(PlaylistSongModel.class,
+                PlaylistSongModel.PLAYLIST + "=?", String.valueOf(model.getId()), null,
+                new RxDB.OnQueryListener<PlaylistSongModel>() {
+                    @Override
+                    public void onResult(List<PlaylistSongModel> results) {
+                        ArrayList<ISong> songs = new ArrayList<>();
+                        for(PlaylistSongModel songModel : results)
+                            songs.add(songModel.song);
+                        mAllSongs = songs;
+
+                        makePlaylist();
+                        // calculate current song
+                        mCurPlayPos = 0;
+                        for(int index = 0; index < mPlaylist.size(); index++)
+                            if(((SongModel)mPlaylist.get(index)).songId == songId)
+                                mCurPlayPos = index;
+                        if(autoPlay)
+                            playOrResume();
+                    }
+
+                    @Override
+                    public void onError(String err) {
+                        L.d(err);
+                    }
+                });
     }
 
     private void makePlaylist() {
@@ -117,8 +162,6 @@ public class MusicService extends BaseMusicService<ISong> {
         if(mCurPlayType == MusicConstants.PLAY_SHUFFLE) {
             mPlaylist = new LinkedList<>(mAllSongs);
             Collections.shuffle(mPlaylist);
-        } else if(mCurPlayType == MusicConstants.PLAY_LOOP_ONE) {
-            mPlaylist = new LinkedList<>(mAllSongs.subList(0, 1));
         } else {
             mPlaylist = new LinkedList<>(mAllSongs);
         }
@@ -134,30 +177,6 @@ public class MusicService extends BaseMusicService<ISong> {
     public void playItem(int position) {
         mCurPlayPos = position;
         play(mPlaylist.get(position));
-    }
-
-    public void playList(@NonNull List<ISong> songs) {
-        playList(songs, MusicConstants.PLAY_LOOP_ALL);
-    }
-
-    public void shuffle() {
-        mCurPlayType = MusicConstants.PLAY_SHUFFLE;
-        makePlaylist();
-    }
-
-    public void loopOne() {
-        mCurPlayType = MusicConstants.PLAY_LOOP_ONE;
-        makePlaylist();
-    }
-
-    public void loopAll() {
-        mCurPlayType = MusicConstants.PLAY_LOOP_ALL;
-        makePlaylist();
-    }
-
-    public void order() {
-        mCurPlayType = MusicConstants.PLAY_ORDER;
-        makePlaylist();
     }
 
     public void next() {
@@ -197,6 +216,10 @@ public class MusicService extends BaseMusicService<ISong> {
                 ? null :mPlaylist.get(mCurPlayPos);
     }
 
+    public List<ISong> getAllSongs() {
+        return mAllSongs;
+    }
+
     /**
      * start play, if current music is not pausing, start play mCurPlayPos song
      * */
@@ -205,6 +228,33 @@ public class MusicService extends BaseMusicService<ISong> {
             resume();
         else
             playItem(mCurPlayPos);
+    }
+
+    public boolean isLoopAll() {
+        return mCurPlayType == MusicConstants.PLAY_LOOP_ALL;
+    }
+
+    public boolean isLoopOne() {
+        return mCurPlayType == MusicConstants.PLAY_LOOP_ONE;
+    }
+
+    public boolean isShuffle() {
+        return mCurPlayType == MusicConstants.PLAY_SHUFFLE;
+    }
+
+    public void loopOne() {
+        mCurPlayType = MusicConstants.PLAY_LOOP_ONE;
+        makePlaylist();
+    }
+
+    public void loopAll() {
+        mCurPlayType = MusicConstants.PLAY_LOOP_ALL;
+        makePlaylist();
+    }
+
+    public void shuffle() {
+        mCurPlayType = MusicConstants.PLAY_SHUFFLE;
+        makePlaylist();
     }
 
 }

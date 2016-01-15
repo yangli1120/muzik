@@ -15,4 +15,5 @@
     <dimen name="half_1_dp">0.5dp</dimen>
 
     <dimen name="height_collapsing_sliding_up_panel">48dp</dimen>
+    <dimen name="height_simple_song">40dp</dimen>
 </resources>

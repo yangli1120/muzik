@@ -1,10 +1,15 @@
 package crazysheep.io.materialmusic;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
+import com.anthonycr.grant.PermissionsManager;
+import com.anthonycr.grant.PermissionsResultAction;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,7 +53,7 @@ public class SplashActivity extends BaseActivity {
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                goMain();
+                                requestStoragePermission();
                             }
 
                             @Override
@@ -66,9 +71,32 @@ public class SplashActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        PermissionsManager.getInstance().notifyPermissionsChange(permissions, grantResults);
+    }
+
     private void goMain() {
         ActivityUtils.start(this, MainActivity.class);
         finish();
+    }
+
+    private void requestStoragePermission() {
+        PermissionsManager.getInstance().requestPermissionsIfNecessaryForResult(getActivity(),
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                new PermissionsResultAction() {
+                    @Override
+                    public void onGranted() {
+                        goMain();
+                    }
+
+                    @Override
+                    public void onDenied(String permission) {
+                        finish();
+                    }
+                });
     }
 
 }

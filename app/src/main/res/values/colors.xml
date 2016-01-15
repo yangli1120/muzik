@@ -14,6 +14,8 @@
 
     <color name="divide_line">#c0c0c0</color>
 
+    <color name="highlight_song">#F39B17</color>
+
     <!-- day theme -->
     <color name="d_itemTextColor">#878787</color>
     <color name="d_nav_item_hl_bg">#e0e0e0</color>

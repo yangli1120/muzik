@@ -21,7 +21,6 @@ public class PlaylistModel extends BaseModel implements Parcelable {
     public static final String PLAYLIST_COVER = "playlist_cover";
     public static final String SONG_COUNT = "song_count";
     public static final String CREATED_AT = "created_at";
-    public static final String IS_LAST_PLAYED = "is_last_played";
 
     @Column(name = PLAYLIST_NAME, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String playlist_name;
@@ -34,9 +33,6 @@ public class PlaylistModel extends BaseModel implements Parcelable {
 
     @Column(name = CREATED_AT)
     public long created_at;
-
-    @Column(name = IS_LAST_PLAYED)
-    public boolean is_last_played; // if this playlist is last played before user exit app
 
     public PlaylistModel() {
         super();

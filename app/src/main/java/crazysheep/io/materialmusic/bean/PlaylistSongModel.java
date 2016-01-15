@@ -26,6 +26,7 @@ public class PlaylistSongModel extends Model {
 
     public static final String PLAYLIST = "playlist";
     public static final String ADDED_AT = "added_at";
+    public static final String INDEX_OF_PLAYLIST = "index_of_playlist";
     public static final String PLAYLIST_ID_PLUS_SONG_ID = "playlist_id_plus_song_id";
     public static final String SONG = "song";
 
@@ -34,6 +35,9 @@ public class PlaylistSongModel extends Model {
 
     @Column(name = ADDED_AT)
     public long added_at;
+
+    @Column(name = INDEX_OF_PLAYLIST)
+    public int index_of_playlist;
 
     @Column(name = PLAYLIST_ID_PLUS_SONG_ID, unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
     public String playlist_id_plus_song_id;
