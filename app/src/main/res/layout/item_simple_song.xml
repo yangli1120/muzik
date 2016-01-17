@@ -4,7 +4,8 @@
     android:layout_height="@dimen/height_simple_song"
     android:orientation="horizontal"
     android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:paddingRight="20dp"
+    android:background="?selectableItemBackground">
 
     <TextView
         android:id="@+id/song_name_tv"

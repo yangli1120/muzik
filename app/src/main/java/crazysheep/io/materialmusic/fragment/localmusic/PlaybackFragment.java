@@ -21,9 +21,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mingle.sweetpick.CustomDelegate;
-import com.mingle.sweetpick.DimEffect;
-import com.mingle.sweetpick.SweetSheet;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 import com.squareup.picasso.Picasso;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
@@ -53,7 +52,7 @@ import de.greenrobot.event.EventBus;
  */
 public class PlaybackFragment extends BaseFragment {
 
-    @Bind(R.id.playback_root) FrameLayout mRootFl;
+    @Bind(R.id.sliding_up_panel) SlidingUpPanelLayout mSlidingUpPanel;
     @Bind(R.id.song_cover_iv) ImageView mBigCoverIv;
     @Bind(R.id.song_play_or_pause_ib) PlayOrPauseImageButton mPlayOrPauseBtn;
     @Bind(R.id.song_little_cover_iv) ImageView mTopSongCoverIv;
@@ -63,10 +62,9 @@ public class PlaybackFragment extends BaseFragment {
     @Bind(R.id.music_sb) DiscreteSeekBar mMusicSb;
     @Bind(R.id.song_play_mode_ib) PlayModeImageButton mPlayModeIb;
     @Bind(R.id.song_play_list_ib) ImageButton mPlaylistIb;
+    @Bind(R.id.playlist_rv) RecyclerView mPlaylistRv;
 
-    private RecyclerView mPlaylistRv;
     private SimpleSongsAdapter mAdapter;
-    private SweetSheet mSweetSheet;
 
     private ISong mCurSong;
 
@@ -79,6 +77,8 @@ public class PlaybackFragment extends BaseFragment {
             mService = ((MusicService.MusicBinder)service).getService();
 
             updatePlayModeButton();
+            mPlayOrPauseBtn.toggle(mService.isPlaying());
+            mAdapter.setData(mService.getAllSongs());
         }
 
         @Override
@@ -114,6 +114,20 @@ public class PlaybackFragment extends BaseFragment {
                 });
         mPlayOrPauseBtn.setResources(R.drawable.ic_play_circle_fill_black,
                 R.drawable.ic_pause_circle_fill_black);
+
+        mPlaylistRv.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mAdapter = new SimpleSongsAdapter(getActivity(), null);
+        mPlaylistRv.setAdapter(mAdapter);
+        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                ISong song = mAdapter.getItem(position);
+                mService.playItem(mService.findIndexOfPlaylist(song.getUrl()));
+                mAdapter.highlight(song.getUrl());
+            }
+        });
+
+        mSlidingUpPanel.setPanelState(PanelState.HIDDEN);
     }
 
     @SuppressWarnings("unused")
@@ -143,33 +157,7 @@ public class PlaybackFragment extends BaseFragment {
     @SuppressWarnings("unused")
     @OnClick(R.id.song_play_list_ib)
     public void clickPlaylistButton() {
-        if(mSweetSheet == null) {
-            View playlistContent = LayoutInflater.from(getActivity()).inflate(
-                    R.layout.layout_recyclerview, mRootFl, false);
-            mPlaylistRv = ButterKnife.findById(playlistContent, R.id.data_rv);
-            mPlaylistRv.setLayoutManager(new LinearLayoutManager(getActivity()));
-            mAdapter = new SimpleSongsAdapter(getActivity(), mService.getAllSongs());
-            mPlaylistRv.setAdapter(mAdapter);
-            mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-                    // play click song
-                    ISong clickSong = mAdapter.getItem(position);
-                    mService.playItem(mService.findIndexOfPlaylist(clickSong.getUrl()));
-                }
-            });
-
-            mSweetSheet = new SweetSheet(mRootFl);
-            mSweetSheet.setBackgroundEffect(new DimEffect(1.2f));
-            CustomDelegate customDelegate = new CustomDelegate(true,
-                    CustomDelegate.AnimationType.DuangLayoutAnimation);
-            customDelegate.setContentHeight(getResources().getDisplayMetrics().heightPixels / 2);
-            customDelegate.setCustomView(playlistContent);
-            mSweetSheet.setBackgroundClickEnable(true);
-            mSweetSheet.setDelegate(customDelegate);
-        }
-        mAdapter.highlight(mService.getCurrentSong().getUrl());
-        mSweetSheet.show();
+        mSlidingUpPanel.setPanelState(PanelState.EXPANDED);
     }
 
     @Override
@@ -270,8 +258,7 @@ public class PlaybackFragment extends BaseFragment {
             mCurSong = song;
             updateUI();
 
-            if(!Utils.checkNull(mSweetSheet) && mSweetSheet.isShow())
-                mAdapter.highlight(mCurSong.getUrl());
+            mAdapter.highlight(song.getUrl());
         }
     }
 

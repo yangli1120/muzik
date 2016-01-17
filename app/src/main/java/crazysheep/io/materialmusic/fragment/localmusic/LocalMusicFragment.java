@@ -16,15 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.activeandroid.query.Select;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout.SimplePanelSlideListener;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import crazysheep.io.materialmusic.MainActivity;
+import crazysheep.io.materialmusic.PlaybackActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.MusicPagerAdapter;
 import crazysheep.io.materialmusic.bean.PlaylistModel;
@@ -32,6 +31,7 @@ import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.prefs.PlaylistPrefs;
 import crazysheep.io.materialmusic.service.MusicService;
+import crazysheep.io.materialmusic.utils.ActivityUtils;
 import crazysheep.io.materialmusic.utils.Utils;
 
 /**
@@ -44,8 +44,6 @@ public class LocalMusicFragment extends BaseFragment {
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.tabs) TabLayout mTabLayout;
     @Bind(R.id.content_vp) ViewPager mContentVp;
-    @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPanelLayout;
-    @Bind(R.id.sliding_up_layout) View mSlidingUpLayout;
     @Bind(R.id.collapsing_player_content_ft) View mMiniPlayerLayout;
 
     private MusicPagerAdapter mMusicAdapter;
@@ -66,11 +64,9 @@ public class LocalMusicFragment extends BaseFragment {
                         .from(PlaylistModel.class)
                         .where(PlaylistModel.PLAYLIST_NAME + "=?", mPlaylistPrefs.getLastPlaylist())
                         .execute();
-                if(playlistModels.size() == 1) {
-                    mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
+                if(playlistModels.size() == 1)
                     mService.playList(playlistModels.get(0), mPlaylistPrefs.getLastPlayMode(),
                             mPlaylistPrefs.getLastPlaySong(), false);
-                }
             }
         }
 
@@ -113,14 +109,6 @@ public class LocalMusicFragment extends BaseFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if(isServiceBind && !mService.isIdle())
-            mSlidingUpPanelLayout.setPanelState(PanelState.COLLAPSED);
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
 
@@ -128,6 +116,13 @@ public class LocalMusicFragment extends BaseFragment {
             getActivity().unbindService(mConnection);
         if(mService.isIdle())
             getActivity().stopService(new Intent(getActivity(), MusicService.class));
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.collapsing_player_content_ft)
+    public void clickMiniPlayer() {
+        ActivityUtils.start(getActivity(), PlaybackActivity.class);
+        getActivity().overridePendingTransition(R.anim.slide_left_in, 0);
     }
 
     private void initUI() {
@@ -144,22 +139,10 @@ public class LocalMusicFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mContentVp);
         mContentVp.setOffscreenPageLimit(mMusicAdapter.getCount());
 
-        mSlidingUpPanelLayout.setPanelSlideListener(new SimplePanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                mMiniPlayerLayout.setAlpha(1 - slideOffset);
-            }
-        });
-
         // init bottom layout
         getChildFragmentManager().beginTransaction()
                 .replace(R.id.collapsing_player_content_ft, new MiniPlayerFragment(),
                         MiniPlayerFragment.TAG)
-                .commitAllowingStateLoss();
-        // init playback layout
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.expanded_player_content_ft, new PlaybackFragment(),
-                        PlaybackFragment.TAG)
                 .commitAllowingStateLoss();
     }
 

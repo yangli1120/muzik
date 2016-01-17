@@ -29,6 +29,9 @@
             android:theme="@style/AppTheme.Day"
             android:launchMode="singleTask">
         </activity>
+        <activity android:name=".PlaybackActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Day"/>
         <activity
             android:name=".PlaylistDetailActivity"
             android:label="@string/app_name"

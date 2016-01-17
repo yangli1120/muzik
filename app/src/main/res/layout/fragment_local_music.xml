@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/sliding_layout"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    sothree:umanoInitialState="hidden"
-    sothree:umanoPanelHeight="@dimen/height_collapsing_sliding_up_panel"
-    sothree:umanoShadowHeight="4dp"
-    sothree:umanoParallaxOffset="100dp"
-    sothree:umanoDragView="@+id/sliding_up_layout"
-    sothree:umanoOverlay="true"
-    sothree:umanoScrollableView="@+id/list">
+    android:fitsSystemWindows="true"
+    tools:context=".fragment.localmusic.LocalMusicFragment">
 
     <android.support.design.widget.CoordinatorLayout
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/coordinator_l"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:fitsSystemWindows="true"
-        tools:context=".fragment.localmusic.LocalMusicFragment">
+        android:layout_above="@+id/collapsing_player_content_ft"
+        android:orientation="vertical">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -55,22 +47,11 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <!-- sliding up layout -->
     <FrameLayout
-        android:id="@+id/sliding_up_layout"
+        android:id="@+id/collapsing_player_content_ft"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="@dimen/height_collapsing_sliding_up_panel"
+        android:background="@android:color/white"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
 
-        <FrameLayout
-            android:id="@+id/expanded_player_content_ft"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/playback_orange"/>
-        <FrameLayout
-            android:id="@+id/collapsing_player_content_ft"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_collapsing_sliding_up_panel"/>
-    </FrameLayout>
-
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
