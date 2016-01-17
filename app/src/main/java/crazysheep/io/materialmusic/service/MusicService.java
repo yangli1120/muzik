@@ -179,6 +179,17 @@ public class MusicService extends BaseMusicService<ISong> {
         play(mPlaylist.get(position));
     }
 
+    /**
+     * find target song's index of playlist, not all song list
+     * */
+    public int findIndexOfPlaylist(@NonNull String songUrl) {
+        for(int i = 0; i < mPlaylist.size(); i++)
+            if(songUrl.equals(mPlaylist.get(i).getUrl()))
+                return i;
+
+        return -1;
+    }
+
     public void next() {
         calculateAndPlayNextSong(true);
     }

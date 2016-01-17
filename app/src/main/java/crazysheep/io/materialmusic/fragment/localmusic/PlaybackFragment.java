@@ -21,8 +21,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mingle.sweetpick.BlurEffect;
 import com.mingle.sweetpick.CustomDelegate;
+import com.mingle.sweetpick.DimEffect;
 import com.mingle.sweetpick.SweetSheet;
 import com.squareup.picasso.Picasso;
 
@@ -34,6 +34,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.adapter.SimpleSongsAdapter;
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
@@ -149,13 +150,22 @@ public class PlaybackFragment extends BaseFragment {
             mPlaylistRv.setLayoutManager(new LinearLayoutManager(getActivity()));
             mAdapter = new SimpleSongsAdapter(getActivity(), mService.getAllSongs());
             mPlaylistRv.setAdapter(mAdapter);
+            mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    // play click song
+                    ISong clickSong = mAdapter.getItem(position);
+                    mService.playItem(mService.findIndexOfPlaylist(clickSong.getUrl()));
+                }
+            });
 
             mSweetSheet = new SweetSheet(mRootFl);
-            mSweetSheet.setBackgroundEffect(new BlurEffect(25));
+            mSweetSheet.setBackgroundEffect(new DimEffect(1.2f));
             CustomDelegate customDelegate = new CustomDelegate(true,
                     CustomDelegate.AnimationType.DuangLayoutAnimation);
             customDelegate.setContentHeight(getResources().getDisplayMetrics().heightPixels / 2);
             customDelegate.setCustomView(playlistContent);
+            mSweetSheet.setBackgroundClickEnable(true);
             mSweetSheet.setDelegate(customDelegate);
         }
         mAdapter.highlight(mService.getCurrentSong().getUrl());
@@ -259,6 +269,9 @@ public class PlaybackFragment extends BaseFragment {
         if(Utils.checkNull(mCurSong) || !song.getUrl().equals(mCurSong.getUrl())) {
             mCurSong = song;
             updateUI();
+
+            if(!Utils.checkNull(mSweetSheet) && mSweetSheet.isShow())
+                mAdapter.highlight(mCurSong.getUrl());
         }
     }
 

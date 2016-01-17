@@ -53,9 +53,12 @@ public class SimpleSongsAdapter extends RecyclerViewBaseAdapter<SimpleSongsAdapt
     }
 
     public void highlight(@NonNull String songUrl) {
+        int oldHighlightPos = highlightPos;
         for(int index = 0; index < getData().size(); index++)
             if(songUrl.equals(getItem(index).getUrl()))
                 notifyItemChanged(highlightPos = index);
+        if(oldHighlightPos >= 0)
+            notifyItemChanged(oldHighlightPos);
     }
 
     //////////////////////////// holder /////////////////////////////////////
