@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.anthonycr.grant.PermissionsManager;
@@ -14,6 +15,7 @@ import com.anthonycr.grant.PermissionsResultAction;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.utils.ActivityUtils;
+import crazysheep.io.materialmusic.utils.ApiHelper;
 
 /**
  * splash activity
@@ -27,6 +29,9 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(ApiHelper.checkK()) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 

@@ -1,5 +1,6 @@
 package crazysheep.io.materialmusic;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -37,9 +37,9 @@ import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
+import crazysheep.io.materialmusic.utils.ActivityUtils;
 import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
-import crazysheep.io.materialmusic.widget.SimplePanelSlideListener;
 import de.greenrobot.event.EventBus;
 
 /**
@@ -49,17 +49,18 @@ import de.greenrobot.event.EventBus;
  */
 public class PlaylistDetailActivity extends BaseSwipeBackActivity implements View.OnClickListener {
 
+    private static final int REQUEST_EDIT_PLAYLIST = 9527;
+
     @Bind(R.id.appbar) AppBarLayout mAppbar;
     @Bind(R.id.toolbar) Toolbar mToolbar;
     @Bind(R.id.data_rv) RecyclerView mSongsRv;
     @Bind(R.id.parallax_header_iv) ImageView mParallaxHeaderIv;
     @Bind(R.id.edit_fab) FloatingActionButton mEditFab;
-    @Bind(R.id.sliding_layout) SlidingUpPanelLayout mSlidingUpPl;
-    @Bind(R.id.collapsing_player_content_ft) View mBottomMusicMiniLayout;
 
     private SongsAdapter mAdapter;
 
     private PlaylistModel mPlaylistModel;
+    private List<PlaylistSongModel> mPlaylistSongModels;
 
     private ISong mCurrentSong;
 
@@ -110,7 +111,10 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.edit_fab: {
-                // TODO modify playlist
+                ActivityUtils.startResult(this, REQUEST_EDIT_PLAYLIST,
+                        ActivityUtils.prepare(this, PlaylistEditActivity.class)
+                                .putParcelableArrayListExtra(MusicConstants.EXTRA_SONG_LIST,
+                                        new ArrayList<>(mAdapter.getData())));
             }break;
         }
     }
@@ -125,6 +129,39 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_EDIT_PLAYLIST: {
+                    ArrayList<SongModel> songModels = data.getParcelableArrayListExtra(
+                            MusicConstants.EXTRA_SONG_LIST);
+
+                    // playlist is modified, update database
+                    List<PlaylistSongModel> surviveItems = new ArrayList<>();
+                    for(int x = 0; x < songModels.size(); x++)
+                        for(int y = 0; y < mPlaylistSongModels.size(); y++)
+                            if(songModels.get(x).songId == mPlaylistSongModels.get(y).song.songId)
+                                surviveItems.add(mPlaylistSongModels.get(y));
+                    mPlaylistSongModels.removeAll(surviveItems);
+                    // delete items first
+                    for(PlaylistSongModel playlistSongModel : mPlaylistSongModels)
+                        playlistSongModel.delete();
+                    // update index in playlist
+                    for(int index = 0; index < surviveItems.size(); index++) {
+                        surviveItems.get(index).index_of_playlist = surviveItems.size() - index;
+                        surviveItems.get(index).save();
+                    }
+
+                    // re-query from db
+                    queryPlaylist();
+                }break;
+            }
+        }
     }
 
     private void initUI() {
@@ -164,19 +201,15 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
             mEditFab.setLayoutParams(params);
             mEditFab.setVisibility(View.GONE);
         }
-
-        // sliding up layout, music info use first song by default
-        mSlidingUpPl.setPanelSlideListener(new SimplePanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-                mBottomMusicMiniLayout.setAlpha(1f - slideOffset);
-            }
-        });
     }
 
     private void parseIntent() {
         mPlaylistModel = getIntent().getParcelableExtra(MusicConstants.EXTRA_PLAYLIST);
 
+        queryPlaylist();
+    }
+
+    private void queryPlaylist() {
         // query table 'playlist_song', get songs of this playlist
         RxDB.query(PlaylistSongModel.class,
                 PlaylistSongModel.PLAYLIST + "=?", String.valueOf(mPlaylistModel.getId()),
@@ -184,6 +217,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
                 new RxDB.OnQueryListener<PlaylistSongModel>() {
                     @Override
                     public void onResult(List<PlaylistSongModel> results) {
+                        mPlaylistSongModels = results;
+
                         ArrayList<SongModel> songs = new ArrayList<>();
                         for(PlaylistSongModel model : results)
                             songs.add(model.song);

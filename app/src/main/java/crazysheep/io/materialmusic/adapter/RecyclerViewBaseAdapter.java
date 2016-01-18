@@ -65,6 +65,29 @@ public abstract class RecyclerViewBaseAdapter<VH extends RecyclerView.ViewHolder
         mOnItemLongClickListener = listener;
     }
 
+    protected boolean isFooter(int position) {
+        return getItemCount() - 1 == position;
+    }
+
+    protected final void removeItem(int position) {
+        if(position >= 0 && position < getItemCount()) {
+            mItems.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    protected final void removeItem(@NonNull DT item) {
+        int index = mItems.indexOf(item);
+        if(index >= 0 && index < getItemCount()) {
+            mItems.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
+    protected final int findItemPosition(@NonNull DT item) {
+        return mItems.indexOf(item);
+    }
+
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         VH holder = onCreateHolder(parent, viewType);

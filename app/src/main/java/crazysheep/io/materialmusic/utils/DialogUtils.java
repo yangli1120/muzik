@@ -2,9 +2,11 @@ package crazysheep.io.materialmusic.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.List;
@@ -22,6 +24,35 @@ public class DialogUtils {
 
     public interface EditDoneCallback {
         void onEditDone(String editableString);
+    }
+
+    public interface ButtonAction {
+        String getTitle();
+        void onClick(DialogInterface dialog);
+    }
+
+    public static Dialog showConfirmDialog(@NonNull Activity activity, String title, String content,
+                                           final ButtonAction okAction) {
+        MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                .title(title)
+                .content(content)
+                .positiveText(okAction.getTitle())
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog,
+                                        @NonNull DialogAction which) {
+                        dismissDialog(dialog);
+                        okAction.onClick(dialog);
+                    }
+                })
+                .build();
+        dialog.setOwnerActivity(activity);
+
+        if (dialog.getOwnerActivity() != null
+                && !dialog.getOwnerActivity().isFinishing())
+            dialog.show();
+
+        return dialog;
     }
 
     /**

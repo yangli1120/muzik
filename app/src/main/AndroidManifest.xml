@@ -35,8 +35,10 @@
         <activity
             android:name=".PlaylistDetailActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.Day">
-        </activity>
+            android:theme="@style/AppTheme.Day"/>
+        <activity android:name=".PlaylistEditActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.Day"/>
 
         <service android:name=".service.FMService"/>
         <service android:name=".service.MusicService" />
