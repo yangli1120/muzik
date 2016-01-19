@@ -143,6 +143,10 @@ public class MusicService extends BaseMusicService<ISong> {
                         for(int index = 0; index < mPlaylist.size(); index++)
                             if(((SongModel)mPlaylist.get(index)).songId == songId)
                                 mCurPlayPos = index;
+                        // broadcast MusicService is ready a song
+                        ready(getCurrentSong());
+                        broadcastCurrentSong();
+
                         if(autoPlay)
                             playOrResume();
                     }
@@ -224,7 +228,7 @@ public class MusicService extends BaseMusicService<ISong> {
      * */
     public ISong getCurrentSong() {
         return Utils.checkNull(mPlaylist) || mCurPlayPos == INVALID_POSITION
-                ? null :mPlaylist.get(mCurPlayPos);
+                ? null : mPlaylist.get(mCurPlayPos);
     }
 
     public List<ISong> getAllSongs() {

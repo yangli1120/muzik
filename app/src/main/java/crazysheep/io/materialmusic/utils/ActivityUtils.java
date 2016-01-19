@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import crazysheep.io.materialmusic.R;
+
 /**
  * activity utils
  *
@@ -17,6 +19,8 @@ public class ActivityUtils {
      * */
     public static void start(@NonNull Context context, @NonNull Class<? extends Activity> clazz) {
         context.startActivity(new Intent(context, clazz));
+        if(context instanceof Activity)
+            ((Activity)context).overridePendingTransition(R.anim.slide_left_in, 0);
     }
 
     /**
@@ -24,6 +28,8 @@ public class ActivityUtils {
      * */
     public static void start(@NonNull Context context, @NonNull Intent intent) {
         context.startActivity(intent);
+        if(context instanceof Activity)
+            ((Activity)context).overridePendingTransition(R.anim.slide_left_in, 0);
     }
 
     /**
@@ -40,6 +46,7 @@ public class ActivityUtils {
     public static void startResult(@NonNull Activity activity, int requestCode,
                                    @NonNull Intent intent) {
         activity.startActivityForResult(intent, requestCode);
+        activity.overridePendingTransition(R.anim.slide_left_in, 0);
     }
 
 }

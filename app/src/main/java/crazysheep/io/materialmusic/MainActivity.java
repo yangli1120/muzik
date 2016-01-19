@@ -14,8 +14,10 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.fragment.FmPlaybackFragment;
 import crazysheep.io.materialmusic.fragment.localmusic.LocalMusicFragment;
+import crazysheep.io.materialmusic.utils.Utils;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -25,6 +27,9 @@ public class MainActivity extends BaseActivity
 
     @Bind(R.id.drawer_layout) DrawerLayout mDrawer;
     @Bind(R.id.nav_view) NavigationView mNavView;
+
+    private LocalMusicFragment mMuzikFt;
+    private BaseFragment mCurFt;
 
     @Override
     protected int getCurrentTheme() {
@@ -99,15 +104,16 @@ public class MainActivity extends BaseActivity
                 // TODO show search fragment
             }break;
 
-            case R.id.nav_douban_fm: {
-                // TODO show douban fm fragment
-            }break;
-
             case R.id.nav_local: {
-                // TODO show local music fragment
+                if(mCurFt == mMuzikFt)
+                    break;
+
+                if(Utils.checkNull(mMuzikFt))
+                    mMuzikFt = new LocalMusicFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.content_fl, new LocalMusicFragment(), LocalMusicFragment.TAG)
+                        .replace(R.id.content_fl, mMuzikFt, LocalMusicFragment.TAG)
                         .commitAllowingStateLoss();
+                mCurFt = mMuzikFt;
             }break;
         }
 

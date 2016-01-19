@@ -14,6 +14,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.ArtistsAdapter;
+import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
 import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
@@ -42,6 +43,12 @@ public class ArtistsFragment extends BaseFragment {
 
         mLayoutMgr = new GridLayoutManager(getActivity(), 2);
         mAdapter = new ArtistsAdapter(getActivity(), null);
+        mAdapter.setOnItemClickListener(new RecyclerViewBaseAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                // TODO jump to artist activity
+            }
+        });
         mArtistsRv.setLayoutManager(mLayoutMgr);
         mArtistsRv.setAdapter(mAdapter);
 

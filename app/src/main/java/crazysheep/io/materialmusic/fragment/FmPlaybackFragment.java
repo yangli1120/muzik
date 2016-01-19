@@ -176,7 +176,6 @@ public class FmPlaybackFragment extends BaseFragment implements View.OnClickList
         if(!mFMService.isPlaying()) {
             mFMService.stop();
         } else {
-            mFMService.notifyPlaying();
         }
         if(bindService) {
             getActivity().unbindService(mConnection);

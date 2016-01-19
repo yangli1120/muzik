@@ -144,6 +144,10 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
         return MusicPlayer.getInstance(this).getMaxProgress();
     }
 
+    public void ready(@NonNull SD song) {
+        mCurrentSong = song;
+    }
+
     public void play(@NonNull SD song) {
         play(song, false);
     }
@@ -213,10 +217,6 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
 
     public boolean isIdle() {
         return MusicPlayer.getInstance(this).isIdle();
-    }
-
-    public void notifyPlaying() {
-        // TODO show ongoing notification to avoid service be killed
     }
 
     public boolean isVolumeOn() {

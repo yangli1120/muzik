@@ -7,13 +7,9 @@
             android:icon="@drawable/ic_search"
             android:title="Search" />
         <item
-            android:id="@+id/nav_douban_fm"
-            android:icon="@drawable/ic_radio"
-            android:title="Douban FM" />
-        <item
             android:id="@+id/nav_local"
             android:icon="@drawable/ic_my_library_music"
-            android:title="Local Music" />
+            android:title="@string/app_name" />
     </group>
 
     <item android:title="Communicate">

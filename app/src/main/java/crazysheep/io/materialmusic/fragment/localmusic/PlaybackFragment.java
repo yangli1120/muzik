@@ -79,6 +79,11 @@ public class PlaybackFragment extends BaseFragment {
             updatePlayModeButton();
             mPlayOrPauseBtn.toggle(mService.isPlaying());
             mAdapter.setData(mService.getAllSongs());
+
+            if(!Utils.checkNull(mService.getCurrentSong())) {
+                mCurSong = mService.getCurrentSong();
+                updateUI();
+            }
         }
 
         @Override

@@ -44,6 +44,7 @@ public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.Artis
                         ViewGroup.LayoutParams params = holder.coverIv.getLayoutParams();
                         if(holder.coverIv.getMeasuredWidth() > 0)
                             params.height = Math.round(holder.coverIv.getMeasuredWidth() * 3f / 5);
+                        holder.coverIv.setLayoutParams(params);
                     }
                 });
 

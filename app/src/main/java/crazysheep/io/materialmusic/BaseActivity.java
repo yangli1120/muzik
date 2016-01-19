@@ -53,4 +53,9 @@ public class BaseActivity extends AppCompatActivity {
             getSupportActionBar().show();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_right_out);
+    }
 }

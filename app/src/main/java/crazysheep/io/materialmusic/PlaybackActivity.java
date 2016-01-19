@@ -20,4 +20,5 @@ public class PlaybackActivity extends BaseSwipeBackActivity {
                 .replace(R.id.content_ft, new PlaybackFragment(), PlaybackFragment.TAG)
                 .commitAllowingStateLoss();
     }
+
 }

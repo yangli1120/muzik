@@ -44,6 +44,7 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
 
                         ViewGroup.LayoutParams params = holder.coverIv.getLayoutParams();
                         params.height = holder.coverIv.getMeasuredWidth();
+                        holder.coverIv.setLayoutParams(params);
                     }
                 });
 

@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#0093FF</color>
+    <color name="colorPrimary">#4B7B8B</color>
+    <color name="colorPrimaryDark">#4D8496</color>
+    <color name="colorAccent">#6BAABF</color>
     <color name="color_nav_bg">#000000</color>
 
     <color name="color_ripple">#9e9d9d</color>
+
+    <color name="pressed_dark">#202020</color>
 
     <color name="playback_bg">#27424B</color>
     <color name="playback_orange">#EB6334</color>

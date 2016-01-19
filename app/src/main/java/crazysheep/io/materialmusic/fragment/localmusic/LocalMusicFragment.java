@@ -46,6 +46,8 @@ public class LocalMusicFragment extends BaseFragment {
     @Bind(R.id.content_vp) ViewPager mContentVp;
     @Bind(R.id.collapsing_player_content_ft) View mMiniPlayerLayout;
 
+    private MiniPlayerFragment mMiniPlayerFt;
+
     private MusicPagerAdapter mMusicAdapter;
 
     private PlaylistPrefs mPlaylistPrefs;
@@ -128,7 +130,7 @@ public class LocalMusicFragment extends BaseFragment {
     private void initUI() {
         ((MainActivity)getActivity()).setToolbar(mToolbar);
         if(!Utils.checkNull(getSupportActionBar())) {
-            getSupportActionBar().setTitle(getString(R.string.tv_local_music_title));
+            getSupportActionBar().setTitle(getString(R.string.app_name));
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -140,9 +142,9 @@ public class LocalMusicFragment extends BaseFragment {
         mContentVp.setOffscreenPageLimit(mMusicAdapter.getCount());
 
         // init bottom layout
+        mMiniPlayerFt = new MiniPlayerFragment();
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.collapsing_player_content_ft, new MiniPlayerFragment(),
-                        MiniPlayerFragment.TAG)
+                .replace(R.id.collapsing_player_content_ft, mMiniPlayerFt, MiniPlayerFragment.TAG)
                 .commitAllowingStateLoss();
     }
 
