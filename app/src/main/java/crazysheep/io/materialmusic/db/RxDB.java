@@ -156,15 +156,18 @@ public class RxDB {
                         songModels.removeAll(hitSongs);
                         ActiveAndroid.beginTransaction();
                         for (SongModel songModel : songModels)
-                                songModel.delete();
+                            songModel.delete();
                         ActiveAndroid.setTransactionSuccessful();
                         ActiveAndroid.endTransaction();
 
                         // update table 'songs'
                         ActiveAndroid.beginTransaction();
                         for (LocalSongDto localSongDto : allsongs) {
-                            SongModel songModel = new SongModel();
-                            songModel.songId = localSongDto.id;
+                            SongModel songModel = Model.load(SongModel.class, localSongDto.id);
+                            if (songModel == null) {
+                                songModel = new SongModel();
+                                songModel.songId = localSongDto.id;
+                            }
                             songModel.album = localSongDto.album_name;
                             songModel.albumId = localSongDto.album_id;
                             songModel.artist = localSongDto.artist_name;
