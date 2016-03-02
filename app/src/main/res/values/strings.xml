@@ -33,6 +33,7 @@
     <string name="toast_song_already_add_to_playlist">\"%s\" already add to playlist</string>
 
     <string name="tv_playlist_song_count">playlist(%s)</string>
+    <string name="tv_clear_playlist">Clear</string>
 
     <string name="tv_item_chosen">Already choose %s items</string>
     <string name="tv_no_item_chosen">No item chosen</string>
@@ -40,9 +41,13 @@
     <string name="tv_delete">Delete</string>
     <string name="tv_delete_confirm">delete %s items?</string>
     <string name="tv_ok">OK</string>
+    <string name="tv_cancel">Cancel</string>
     <string name="tv_give_up_playlist_edit">Give up edit playlist?</string>
 
     <!-- menu -->
     <string name="menu_add_to_playlist">add to playlist</string>
     <string name="menu_remove_from_playlist">remove</string>
+
+    <!-- playback fragment -->
+    <string name="tv_clear_all_songs_from_playlist">clear all songs from this playlist?</string>
 </resources>

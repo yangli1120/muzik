@@ -175,13 +175,37 @@
             app:layout_marginTopPercent="40%"
             android:orientation="vertical">
 
-            <TextView
-                style="@style/MyTextTheme"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_simple_song"
-                android:text="@string/tv_my_playlist"
-                android:textColor="@color/text_grey_light"
-                android:textSize="@dimen/text_size_14" />
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp">
+
+                <TextView
+                    android:id="@+id/playlist_header_tv"
+                    style="@style/MyTextTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="@string/tv_my_playlist"
+                    android:textColor="@color/text_grey_dark"
+                    android:textSize="@dimen/text_size_14" />
+                <TextView
+                    android:id="@+id/playlist_clear_tv"
+                    style="@style/MyTextTheme"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/tv_clear_playlist"
+                    android:textColor="@color/text_grey_light"
+                    android:textSize="@dimen/text_size_11"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/half_1_dp"
+                    android:layout_alignParentBottom="true"
+                    android:background="@color/divide_line"/>
+            </RelativeLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/playlist_rv"

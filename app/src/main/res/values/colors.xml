@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4B7B8B</color>
-    <color name="colorPrimaryDark">#4D8496</color>
-    <color name="colorAccent">#6BAABF</color>
+    <color name="colorPrimary">#607d8b</color>
+    <color name="colorPrimaryDark">#546e7a</color>
+    <color name="colorAccent">#78909c</color>
     <color name="color_nav_bg">#000000</color>
 
     <color name="color_ripple">#9e9d9d</color>

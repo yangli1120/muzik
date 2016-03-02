@@ -97,7 +97,8 @@ public class PlaylistEditActivity extends BaseSwipeBackActivity implements OnSta
                     public void onClick(DialogInterface dialog) {
                         finish();
                     }
-                });
+                },
+                null);
     }
 
     private void initUI() {
@@ -153,7 +154,8 @@ public class PlaylistEditActivity extends BaseSwipeBackActivity implements OnSta
                     public void onClick(DialogInterface dialog) {
                         mAdapter.removeChosenItems();
                     }
-                });
+                },
+                null);
     }
 
     @SuppressWarnings("unused")

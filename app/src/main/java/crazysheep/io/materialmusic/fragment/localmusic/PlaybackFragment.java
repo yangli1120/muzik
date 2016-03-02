@@ -2,6 +2,7 @@ package crazysheep.io.materialmusic.fragment.localmusic;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
@@ -20,6 +21,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
@@ -40,6 +42,8 @@ import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.media.MusicPlayer;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
+import crazysheep.io.materialmusic.utils.DialogUtils;
+import crazysheep.io.materialmusic.utils.TimeUtils;
 import crazysheep.io.materialmusic.utils.Utils;
 import crazysheep.io.materialmusic.widget.PlayModeImageButton;
 import crazysheep.io.materialmusic.widget.PlayOrPauseImageButton;
@@ -63,6 +67,7 @@ public class PlaybackFragment extends BaseFragment {
     @Bind(R.id.song_play_mode_ib) PlayModeImageButton mPlayModeIb;
     @Bind(R.id.song_play_list_ib) ImageButton mPlaylistIb;
     @Bind(R.id.playlist_rv) RecyclerView mPlaylistRv;
+    @Bind(R.id.playlist_header_tv) TextView mPlaylistHeaderTv;
 
     private SimpleSongsAdapter mAdapter;
 
@@ -79,6 +84,8 @@ public class PlaybackFragment extends BaseFragment {
             updatePlayModeButton();
             mPlayOrPauseBtn.toggle(mService.isPlaying());
             mAdapter.setData(mService.getAllSongs());
+            mPlaylistHeaderTv.setText(getString(R.string.tv_playlist_song_count,
+                    mAdapter.getItemCount()));
 
             if(!Utils.checkNull(mService.getCurrentSong())) {
                 mCurSong = mService.getCurrentSong();
@@ -95,7 +102,8 @@ public class PlaybackFragment extends BaseFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View contentView = inflater.inflate(R.layout.fragment_local_music_playback,
                 container, false);
         ButterKnife.bind(this, contentView);
@@ -133,6 +141,36 @@ public class PlaybackFragment extends BaseFragment {
         });
 
         mSlidingUpPanel.setPanelState(PanelState.HIDDEN);
+
+        mMusicSb.setOnProgressChangeListener(new DiscreteSeekBar.OnProgressChangeListener() {
+            @Override
+            public void onProgressChanged(DiscreteSeekBar seekBar, int value, boolean fromUser) {}
+
+            @Override
+            public void onStartTrackingTouch(DiscreteSeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(DiscreteSeekBar seekBar) {
+                if (isServiceBind)
+                    mService.seekTo(seekBar.getProgress());
+            }
+        });
+        mMusicSb.setNumericTransformer(new DiscreteSeekBar.NumericTransformer() {
+            @Override
+            public int transform(int value) {
+                return value;
+            }
+
+            @Override
+            public boolean useStringTransform() {
+                return true;
+            }
+
+            @Override
+            public String transformToString(int value) {
+                return TimeUtils.formatDuration(value);
+            }
+        });
     }
 
     @SuppressWarnings("unused")
@@ -208,6 +246,38 @@ public class PlaybackFragment extends BaseFragment {
 
             updatePlayModeButton();
         }
+    }
+
+    @SuppressWarnings("unused")
+    @OnClick(R.id.playlist_clear_tv)
+    public void clickClearPlaylist() {
+        DialogUtils.showConfirmDialog(getActivity(),
+                getString(R.string.tv_clear_playlist),
+                getString(R.string.tv_clear_all_songs_from_playlist),
+                new DialogUtils.ButtonAction() {
+                    @Override
+                    public String getTitle() {
+                        return getString(R.string.tv_ok);
+                    }
+
+                    @Override
+                    public void onClick(DialogInterface dialog) {
+                        // TODO clear playlist
+                        Toast.makeText(getActivity(),
+                                String.format("clear %s songs", mAdapter.getItemCount()),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                },
+                new DialogUtils.ButtonAction() {
+                    @Override
+                    public String getTitle() {
+                        return getString(R.string.tv_cancel);
+                    }
+
+                    @Override
+                    public void onClick(DialogInterface dialog) {
+                    }
+                });
     }
 
     private void updateUI() {

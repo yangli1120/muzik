@@ -32,20 +32,32 @@ public class DialogUtils {
     }
 
     public static Dialog showConfirmDialog(@NonNull Activity activity, String title, String content,
-                                           final ButtonAction okAction) {
-        MaterialDialog dialog = new MaterialDialog.Builder(activity)
+                                           final ButtonAction okAction,
+                                           final ButtonAction cancelAction) {
+        MaterialDialog.Builder builder = new MaterialDialog.Builder(activity)
                 .title(title)
-                .content(content)
-                .positiveText(okAction.getTitle())
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog,
-                                        @NonNull DialogAction which) {
-                        dismissDialog(dialog);
-                        okAction.onClick(dialog);
-                    }
-                })
-                .build();
+                .content(content);
+        if(!Utils.checkNull(okAction))
+            builder.positiveText(okAction.getTitle())
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                            @NonNull DialogAction which) {
+                            dismissDialog(dialog);
+                            okAction.onClick(dialog);
+                        }
+                    });
+        if(!Utils.checkNull(cancelAction))
+            builder.negativeText(cancelAction.getTitle())
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog,
+                                            @NonNull DialogAction which) {
+                            dismissDialog(dialog);
+                            cancelAction.onClick(dialog);
+                        }
+                    });
+        MaterialDialog dialog = builder.build();
         dialog.setOwnerActivity(activity);
 
         if (dialog.getOwnerActivity() != null
