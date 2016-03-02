@@ -17,6 +17,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
+import crazysheep.io.materialmusic.bean.IPlaylist;
 import crazysheep.io.materialmusic.bean.PlaylistModel;
 import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
 
@@ -26,9 +27,9 @@ import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
  * Created by crazysheep on 15/12/17.
  */
 public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.PlaylistHolder,
-        PlaylistModel>{
+        IPlaylist>{
 
-    public PlaylistAdapter(Context context, List<PlaylistModel> datas) {
+    public PlaylistAdapter(Context context, List<IPlaylist> datas) {
         super(context, datas);
     }
 
@@ -53,21 +54,21 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
 
     @Override
     public void onBindViewHolder(PlaylistHolder holder, int position) {
-        PlaylistModel item = getItem(position);
+        IPlaylist item = getItem(position);
 
         // cancel request before
         Picasso.with(mContext)
                 .cancelRequest(holder.coverIv);
 
-        if(!TextUtils.isEmpty(item.playlist_cover))
+        if(!TextUtils.isEmpty(item.getAvatar()))
             Picasso.with(mContext)
-                    .load(new File(item.playlist_cover))
+                    .load(new File(item.getAvatar()))
                     .fit()
                     .centerCrop()
                     .into(holder.coverIv);
         else
             holder.coverIv.setImageResource(R.drawable.place_holder);
-        holder.nameTv.setText(item.playlist_name);
+        holder.nameTv.setText(item.getPlaylistName());
     }
 
     //////////////////////// view holder ///////////////////////////////

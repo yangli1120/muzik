@@ -8,12 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
+import crazysheep.io.materialmusic.bean.IPlaylist;
 import crazysheep.io.materialmusic.bean.localmusic.LocalAlbumDto;
 import crazysheep.io.materialmusic.db.RxDB;
 import crazysheep.io.materialmusic.fragment.BaseFragment;
@@ -63,18 +65,20 @@ public class AlbumsFragment extends BaseFragment {
     }
 
     private void queryAlbums() {
-        // TODO
-        /*mSubscription = RxDB.getAllAlbums(getActivity().getContentResolver(),
+        mSubscription = RxDB.getAllAlbums(getActivity().getContentResolver(),
                 new RxDB.OnQueryListener<LocalAlbumDto>() {
                     @Override
                     public void onResult(List<LocalAlbumDto> results) {
-                        mAdapter.setData(results);
+                        List<IPlaylist> albums = new ArrayList<>(results.size());
+                        for(LocalAlbumDto album : results)
+                            albums.add(album);
+                        mAdapter.setData(albums);
                     }
 
                     @Override
                     public void onError(String err) {
                     }
-                });*/
+                });
     }
 
 }

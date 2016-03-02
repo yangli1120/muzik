@@ -12,6 +12,7 @@ import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
 
 import java.util.List;
 
+import crazysheep.io.materialmusic.bean.IPlaylist;
 import crazysheep.io.materialmusic.db.MediaStoreHelper;
 import crazysheep.io.materialmusic.utils.Utils;
 
@@ -21,7 +22,7 @@ import crazysheep.io.materialmusic.utils.Utils;
  * Created by crazysheep on 15/12/28.
  */
 @ParcelablePlease
-public class LocalAlbumDto implements Parcelable {
+public class LocalAlbumDto implements Parcelable, IPlaylist {
 
     public static final String[] ALBUM_COLUMNS = new String[]{
             MediaStore.Audio.Albums._ID,
@@ -59,6 +60,18 @@ public class LocalAlbumDto implements Parcelable {
     public String album_cover;
 
     public boolean is_editable;
+
+    @Override
+    public String getAvatar() {
+        return album_cover;
+    }
+
+    @Override
+    public String getPlaylistName() {
+        return album_name;
+    }
+
+    //////////////////////////////// parcelable ////////////////////////////////
 
     @Override
     public int describeContents() {

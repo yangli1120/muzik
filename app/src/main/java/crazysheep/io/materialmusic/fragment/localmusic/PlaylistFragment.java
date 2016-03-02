@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -16,6 +17,7 @@ import crazysheep.io.materialmusic.PlaylistDetailActivity;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.adapter.PlaylistAdapter;
 import crazysheep.io.materialmusic.adapter.RecyclerViewBaseAdapter;
+import crazysheep.io.materialmusic.bean.IPlaylist;
 import crazysheep.io.materialmusic.bean.PlaylistModel;
 import crazysheep.io.materialmusic.constants.MusicConstants;
 import crazysheep.io.materialmusic.db.RxDB;
@@ -51,7 +53,8 @@ public class PlaylistFragment extends BaseFragment {
             public void onItemClick(View view, int position) {
                 ActivityUtils.start(getActivity(),
                         ActivityUtils.prepare(getActivity(), PlaylistDetailActivity.class)
-                                .putExtra(MusicConstants.EXTRA_PLAYLIST, mAdapter.getItem(position)));
+                                .putExtra(MusicConstants.EXTRA_PLAYLIST,
+                                        (PlaylistModel)mAdapter.getItem(position)));
             }
         });
 
@@ -73,7 +76,10 @@ public class PlaylistFragment extends BaseFragment {
                 new RxDB.OnQueryListener<PlaylistModel>() {
                     @Override
                     public void onResult(List<PlaylistModel> results) {
-                        mAdapter.setData(results);
+                        List<IPlaylist> playlists = new ArrayList<>(results.size());
+                        for(PlaylistModel playlist : results)
+                            playlists.add(playlist);
+                        mAdapter.setData(playlists);
                     }
 
                     @Override

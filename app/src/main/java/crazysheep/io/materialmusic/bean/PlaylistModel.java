@@ -15,7 +15,7 @@ import com.hannesdorfmann.parcelableplease.annotation.ParcelablePlease;
  */
 @ParcelablePlease
 @Table(name = "playlists")
-public class PlaylistModel extends BaseModel implements Parcelable {
+public class PlaylistModel extends BaseModel implements Parcelable, IPlaylist {
 
     public static final String PLAYLIST_NAME = "playlist_name";
     public static final String PLAYLIST_COVER = "playlist_cover";
@@ -45,6 +45,18 @@ public class PlaylistModel extends BaseModel implements Parcelable {
     }
 
     public boolean isEditable = true; // if playlist can been edited
+
+    @Override
+    public String getAvatar() {
+        return playlist_cover;
+    }
+
+    @Override
+    public String getPlaylistName() {
+        return playlist_name;
+    }
+
+    ////////////////////////////// parcelable //////////////////////////////////
 
     @Override
     public int describeContents() {
