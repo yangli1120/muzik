@@ -6,7 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 
 import crazysheep.io.materialmusic.net.NetClient;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 
 /**
  * base fragment

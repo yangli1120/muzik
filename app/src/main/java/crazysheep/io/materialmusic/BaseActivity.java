@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import crazysheep.io.materialmusic.net.NetClient;
 import crazysheep.io.materialmusic.utils.Utils;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
 
 /**
  * base activity

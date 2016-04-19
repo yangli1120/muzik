@@ -6,13 +6,15 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.lang.ref.WeakReference;
 
 import crazysheep.io.materialmusic.bean.ISong;
 import crazysheep.io.materialmusic.media.MusicPlayer;
 import crazysheep.io.materialmusic.utils.NotifyUtils;
 import crazysheep.io.materialmusic.utils.Utils;
-import de.greenrobot.event.EventBus;
 
 /**
  * base music service, provide base api for music action, just focus on current playing song
@@ -109,7 +111,8 @@ public abstract class BaseMusicService<SD extends ISong> extends Service {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicPlayDone event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicPlayDone event) {
         playDone();
     }
 

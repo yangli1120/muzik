@@ -2,10 +2,10 @@ package crazysheep.io.materialmusic.net;
 
 import crazysheep.io.materialmusic.bean.doubanfm.AlbumDto;
 import crazysheep.io.materialmusic.bean.doubanfm.PlaylistDto;
-import retrofit.Call;
-import retrofit.http.GET;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * douban music api

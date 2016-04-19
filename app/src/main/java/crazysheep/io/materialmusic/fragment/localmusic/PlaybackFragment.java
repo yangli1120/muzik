@@ -28,6 +28,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState;
 import com.squareup.picasso.Picasso;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 
@@ -47,7 +49,6 @@ import crazysheep.io.materialmusic.utils.TimeUtils;
 import crazysheep.io.materialmusic.utils.Utils;
 import crazysheep.io.materialmusic.widget.PlayModeImageButton;
 import crazysheep.io.materialmusic.widget.PlayOrPauseImageButton;
-import de.greenrobot.event.EventBus;
 
 /**
  * playback fragment for local music
@@ -303,7 +304,8 @@ public class PlaybackFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+    @Subscribe
+    public void onEvent(@NonNull BaseMusicService.EventSongProgress event) {
         compareEventSong(event.song);
 
         mMusicSb.setMax(event.maxProgress);
@@ -311,19 +313,22 @@ public class PlaybackFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicPause event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicPause event) {
         mPlayOrPauseBtn.toggle(false);
         compareEventSong(event.song);
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicResume event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicResume event) {
         mPlayOrPauseBtn.toggle(true);
         compareEventSong(event.song);
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicStop event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicStop event) {
         mPlayOrPauseBtn.toggle(false);
         compareEventSong(event.song);
     }

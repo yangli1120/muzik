@@ -22,6 +22,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,7 +36,6 @@ import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.FMService;
 import crazysheep.io.materialmusic.utils.StringUtils;
 import crazysheep.io.materialmusic.widget.SimpleAnimatorListener;
-import de.greenrobot.event.EventBus;
 
 /**
  * playback fragment
@@ -185,7 +186,8 @@ public class FmPlaybackFragment extends BaseFragment implements View.OnClickList
 
     // event bus message receiver
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+    @Subscribe
+    public void onEvent(@NonNull BaseMusicService.EventSongProgress event) {
         if(mCurSong.sid != ((SongDto)event.song).sid) {
             mCurSong = (SongDto)event.song;
             updateCurrentSongUI();
@@ -197,7 +199,8 @@ public class FmPlaybackFragment extends BaseFragment implements View.OnClickList
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull FMService.EventCurrentAndNextSong event) {
+    @Subscribe
+    public void onEvent(@NonNull FMService.EventCurrentAndNextSong event) {
         mCurSong = event.currentSong;
         mNextSong = event.nextSong;
 

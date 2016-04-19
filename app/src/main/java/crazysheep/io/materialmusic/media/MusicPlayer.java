@@ -5,10 +5,11 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 
 import crazysheep.io.materialmusic.bean.ISong;
-import de.greenrobot.event.EventBus;
 
 /**
  * playList music

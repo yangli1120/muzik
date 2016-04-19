@@ -1,14 +1,13 @@
 package crazysheep.io.materialmusic.net;
 
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.IOException;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * network layer, http request api
@@ -25,16 +24,17 @@ public class NetClient {
     public static Retrofit retrofit() {
         if(mRetrofit == null)
             synchronized (NetClient.class) {
-                OkHttpClient client = new OkHttpClient();
-                client.interceptors().add(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request().newBuilder()
-                                .build();
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .addInterceptor(new Interceptor() {
+                            @Override
+                            public Response intercept(Chain chain) throws IOException {
+                                Request request = chain.request().newBuilder()
+                                        .build();
 
-                        return chain.proceed(request);
-                    }
-                });
+                                return chain.proceed(request);
+                            }
+                        })
+                        .build();
 
                 mRetrofit = new Retrofit.Builder()
                         .baseUrl(NetConstants.BASE_URL)

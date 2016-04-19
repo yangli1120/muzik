@@ -5,6 +5,8 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.LinkedList;
 
 import crazysheep.io.materialmusic.bean.doubanfm.PlaylistDto;
@@ -12,11 +14,10 @@ import crazysheep.io.materialmusic.bean.doubanfm.SongDto;
 import crazysheep.io.materialmusic.net.DoubanService;
 import crazysheep.io.materialmusic.net.NetClient;
 import crazysheep.io.materialmusic.utils.Utils;
-import de.greenrobot.event.EventBus;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
 
 /**
  * fm background service, implement FM background logic
@@ -74,7 +75,7 @@ public class FMService extends BaseMusicService<SongDto> {
         mPlaylistCall = mDoubanService.fetchPlaylist(DoubanService.DEFAULT_CHANNEL_ID);
         mPlaylistCall.enqueue(new Callback<PlaylistDto>() {
             @Override
-            public void onResponse(Response<PlaylistDto> response, Retrofit retrofit) {
+            public void onResponse(Call<PlaylistDto> call, Response<PlaylistDto> response) {
                 if (!Utils.checkNull(response.body())
                         && !Utils.checkNull(response.body().song)
                         && !Utils.checkNull(response.body().song.get(0)))
@@ -86,7 +87,7 @@ public class FMService extends BaseMusicService<SongDto> {
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<PlaylistDto> call, Throwable t) {
             }
         });
     }

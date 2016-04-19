@@ -14,6 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.util.List;
 
 import butterknife.Bind;
@@ -28,7 +31,6 @@ import crazysheep.io.materialmusic.fragment.BaseFragment;
 import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
-import de.greenrobot.event.EventBus;
 import rx.Subscription;
 
 /**
@@ -134,7 +136,8 @@ public class SongsFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+    @Subscribe
+    public void onEvent(@NonNull BaseMusicService.EventSongProgress event) {
         if(Utils.checkNull(mCurrentSong)
                 || !event.song.getUrl().equals(mCurrentSong.getUrl())) {
             mCurrentSong = event.song;

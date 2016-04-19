@@ -47,7 +47,9 @@
         <meta-data android:name="AA_DB_NAME" android:value="muzik.db" />
         <meta-data android:name="AA_DB_VERSION" android:value="1" />
         <meta-data android:name="AA_MODELS"
-            android:value=".bean.SongModel, .bean.PlaylistSongModel, .bean.PlaylistModel" />
+            android:value="crazysheep.io.materialmusic.bean.SongModel,
+                           crazysheep.io.materialmusic.bean.PlaylistSongModel,
+                           crazysheep.io.materialmusic.bean.PlaylistModel" />
     </application>
 
 </manifest>

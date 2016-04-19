@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.File;
 
 import butterknife.Bind;
@@ -31,7 +34,6 @@ import crazysheep.io.materialmusic.service.BaseMusicService;
 import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.Utils;
 import crazysheep.io.materialmusic.widget.PlayOrPauseImageButton;
-import de.greenrobot.event.EventBus;
 
 /**
  * bottom mini player fragment, communicate with {@link crazysheep.io.materialmusic.service.MusicService}
@@ -126,7 +128,8 @@ public class MiniPlayerFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+    @Subscribe
+    public void onEvent(@NonNull BaseMusicService.EventSongProgress event) {
         if(Utils.checkNull(mCurSong) || !event.song.getCover().equals(mCurSong.getUrl())) {
             mCurSong = event.song;
             updateUI();
@@ -134,19 +137,22 @@ public class MiniPlayerFragment extends BaseFragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicResume event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicResume event) {
         mPlayOrPauseBtn.toggle(true);
         compareEventSong(event.song);
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicPause event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicPause event) {
         mPlayOrPauseBtn.toggle(false);
         compareEventSong(event.song);
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull MusicPlayer.EventMusicStop event) {
+    @Subscribe
+    public void onEvent(@NonNull MusicPlayer.EventMusicStop event) {
         mPlayOrPauseBtn.toggle(false);
         compareEventSong(event.song);
     }

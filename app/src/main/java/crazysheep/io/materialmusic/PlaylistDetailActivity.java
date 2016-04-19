@@ -21,6 +21,9 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +43,6 @@ import crazysheep.io.materialmusic.service.MusicService;
 import crazysheep.io.materialmusic.utils.ActivityUtils;
 import crazysheep.io.materialmusic.utils.L;
 import crazysheep.io.materialmusic.utils.Utils;
-import de.greenrobot.event.EventBus;
 
 /**
  * show contain songs of a playlist
@@ -234,7 +236,8 @@ public class PlaylistDetailActivity extends BaseSwipeBackActivity implements Vie
     }
 
     @SuppressWarnings("unused")
-    public void onEventMainThread(@NonNull BaseMusicService.EventSongProgress event) {
+    @Subscribe
+    public void onEvent(@NonNull BaseMusicService.EventSongProgress event) {
         if(Utils.checkNull(mCurrentSong)
                 || !event.song.getUrl().equals(mCurrentSong.getUrl())) {
             mCurrentSong = event.song;
