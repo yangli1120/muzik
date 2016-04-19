@@ -1,7 +1,7 @@
 package crazysheep.io.materialmusic.adapter;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +9,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.rebound.SpringSystem;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -18,7 +19,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import crazysheep.io.materialmusic.R;
 import crazysheep.io.materialmusic.bean.IPlaylist;
-import crazysheep.io.materialmusic.bean.PlaylistModel;
 import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
 
 /**
@@ -29,6 +29,8 @@ import crazysheep.io.materialmusic.fragment.localmusic.PlaylistFragment;
 public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.PlaylistHolder,
         IPlaylist>{
 
+    private SpringSystem mSpringSystem = SpringSystem.create();
+
     public PlaylistAdapter(Context context, List<IPlaylist> datas) {
         super(context, datas);
     }
@@ -36,7 +38,7 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
     @Override
     protected PlaylistHolder onCreateHolder(ViewGroup parent, int viewType) {
         final PlaylistHolder holder = new PlaylistHolder(
-                mInflater.inflate(R.layout.item_album, parent, false));
+                mInflater.inflate(R.layout.item_album, parent, false), mSpringSystem);
         holder.coverIv.getViewTreeObserver().addOnGlobalLayoutListener(
                 new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -72,13 +74,14 @@ public class PlaylistAdapter extends RecyclerViewBaseAdapter<PlaylistAdapter.Pla
     }
 
     //////////////////////// view holder ///////////////////////////////
-    public static class PlaylistHolder extends RecyclerView.ViewHolder {
+
+    public static class PlaylistHolder extends RecyclerViewBaseAdapter.ReboundViewHolder {
 
         @Bind(R.id.playlist_cover_iv) ImageView coverIv;
         @Bind(R.id.playlist_name_tv) TextView nameTv;
 
-        public PlaylistHolder(View parent) {
-            super(parent);
+        public PlaylistHolder(View parent, @NonNull SpringSystem ss) {
+            super(parent, ss);
             ButterKnife.bind(this, parent);
         }
     }

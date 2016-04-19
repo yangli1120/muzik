@@ -2,7 +2,6 @@ package crazysheep.io.materialmusic.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +9,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.rebound.SpringSystem;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -27,6 +27,8 @@ import crazysheep.io.materialmusic.bean.localmusic.LocalArtistDto;
  */
 public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.ArtistHolder, LocalArtistDto> {
 
+    private SpringSystem mSrpingSystem = SpringSystem.create();
+
     public ArtistsAdapter(@NonNull Context context, List<LocalArtistDto> data) {
         super(context, data);
     }
@@ -34,7 +36,7 @@ public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.Artis
     @Override
     protected ArtistHolder onCreateHolder(ViewGroup parent, int viewType) {
         final ArtistHolder holder = new ArtistHolder(
-                mInflater.inflate(R.layout.item_artist, parent, false));
+                mInflater.inflate(R.layout.item_artist, parent, false), mSrpingSystem);
         holder.coverIv.getViewTreeObserver()
                 .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
@@ -73,13 +75,13 @@ public class ArtistsAdapter extends RecyclerViewBaseAdapter<ArtistsAdapter.Artis
 
     /////////////////////// view holder ////////////////////////////////
 
-    protected static class ArtistHolder extends RecyclerView.ViewHolder {
+    protected static class ArtistHolder extends RecyclerViewBaseAdapter.ReboundViewHolder {
 
         @Bind(R.id.artist_cover_iv) ImageView coverIv;
         @Bind(R.id.artist_name_tv) TextView nameTv;
 
-        public ArtistHolder(View view) {
-            super(view);
+        public ArtistHolder(View view, SpringSystem ss) {
+            super(view, ss);
             ButterKnife.bind(this, view);
         }
     }

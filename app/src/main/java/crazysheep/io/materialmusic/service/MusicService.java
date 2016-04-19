@@ -102,11 +102,13 @@ public class MusicService extends BaseMusicService<ISong> {
         unregisterReceiver(mReceiver);
 
         // save last playlist model for next startup app
-        PlaylistPrefs prefs = new PlaylistPrefs(this);
-        prefs.setLastPlaylist(mPlaylistModel.playlist_name);
-        prefs.setLastPlayMode(mCurPlayType);
-        SongModel songModel = (SongModel) mPlaylist.get(mCurPlayPos);
-        prefs.setLastPlaySong(songModel.songId);
+        if(!Utils.checkNull(mPlaylistModel)) {
+            PlaylistPrefs prefs = new PlaylistPrefs(this);
+            prefs.setLastPlaylist(mPlaylistModel.playlist_name);
+            prefs.setLastPlayMode(mCurPlayType);
+            SongModel songModel = (SongModel) mPlaylist.get(mCurPlayPos);
+            prefs.setLastPlaySong(songModel.songId);
+        }
     }
 
     ////////////////////////// music operations //////////////////////
