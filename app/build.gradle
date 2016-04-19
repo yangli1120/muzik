@@ -103,6 +103,10 @@ dependencies {
     compile group: 'commons-io', name: 'commons-io', version: "${apacheCommonIoVersion}"
     // butter knife
     compile "com.jakewharton:butterknife:${butterknifeVersion}"
+    // dagger2
+    compile "com.google.dagger:dagger:${dagger2Version}"
+    apt "com.google.dagger:dagger-compiler:${dagger2Version}"
+    compile "org.glassfish:javax.annotation:10.0-b28"
     // for pretty log
     compile 'com.github.orhanobut:logger:1.12'
     // swipebacklayout

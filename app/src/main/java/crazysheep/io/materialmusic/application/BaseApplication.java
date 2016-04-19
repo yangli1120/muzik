@@ -6,6 +6,10 @@ import com.activeandroid.ActiveAndroid;
 import com.facebook.stetho.Stetho;
 import com.orhanobut.logger.Logger;
 
+import crazysheep.io.materialmusic.dagger2.componet.ApplicationComponent;
+import crazysheep.io.materialmusic.dagger2.componet.DaggerApplicationComponent;
+import crazysheep.io.materialmusic.dagger2.module.ApplicationModule;
+
 /**
  * base application
  *
@@ -15,9 +19,16 @@ public class BaseApplication extends Application {
 
     public static final String TAG = "MaterialMusic";
 
+    private ApplicationComponent mComponent;
+
     @Override
     public void onCreate() {
         super.onCreate();
+
+        mComponent = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .build();
+        mComponent.inject(this);
 
         Logger.init(TAG)
                 .methodCount(5);
@@ -33,4 +44,9 @@ public class BaseApplication extends Application {
 
         ActiveAndroid.dispose();
     }
+
+    public ApplicationComponent getComponent() {
+        return mComponent;
+    }
+
 }
